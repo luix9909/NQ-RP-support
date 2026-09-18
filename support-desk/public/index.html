@@ -540,12 +540,16 @@ function connectSocket() {
     document.getElementById('chat-typing').textContent = text ? '🖊️ الموظف يكتب...' : '';
   });
   socket.on('ticket:status', (data) => {
+    if (!data || !data.status) return;
     currentStatus = data.status;
-    if (data.status === 'active' && document.getElementById('chat-screen').classList.contains('active') === false) {
+    console.log('status update', data.status);
+
+    if (data.status === 'active') {
+      // افتح الشات فوراً عند الزبون
       showChat(data);
       socket.emit('ticket:join', { ticketId, accessToken });
     } else if (data.status === 'closed') {
-      updateStatusUI(data);
+      document.getElementById('hold-music').pause();
       if (document.getElementById('chat-screen').classList.contains('active')) {
         document.getElementById('chat-form').style.display = 'none';
         document.getElementById('closed-area').innerHTML = `
@@ -553,6 +557,8 @@ function connectSocket() {
             <h3>${data.outcome === 'approved' ? '✅ تم حل الطلب' : 'تم إغلاق الطلب'}</h3>
             <p>${escapeHtml(data.solution || '')}</p>
           </div>`;
+      } else {
+        updateStatusUI(data);
       }
     } else {
       updateStatusUI(data);

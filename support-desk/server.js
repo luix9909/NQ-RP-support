@@ -253,9 +253,11 @@ app.post('/api/admin/tickets/:id/accept', requireAdminAuth, (req, res) => {
   stmts.acceptTicket.run(req.admin.id, req.admin.name, t.id);
   const sysMsg = stmts.insertSystemMessage.run(t.id, `تم الاتصال بك من قبل ${req.admin.name} — كيف نقدر نساعدك؟`);
   const msg = stmts.getMessageById.get(sysMsg.lastInsertRowid);
+  const status = ticketStatusPayload(t.id);
   io.to('ticket:' + t.id).emit('ticket:message', msg);
+  io.to('ticket:' + t.id).emit('ticket:status', status);  // مهم: يفتح الشات عند الزبون
   broadcastQueue();
-  res.json(ticketStatusPayload(t.id));
+  res.json(status);
 });
 
 app.post('/api/admin/tickets/:id/close', requireAdminAuth, (req, res) => {
