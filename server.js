@@ -89,6 +89,7 @@ function ticketStatusPayload(ticketId) {
 function broadcastQueue() {
   const waiting = stmts.waitingIds.all();
   waiting.forEach(w => io.to('ticket:' + w.id).emit('ticket:status', ticketStatusPayload(w.id)));
+  // أرسل التحديث فوراً لكل الأدمن المتصلين
   io.to('admins:queue').emit('queue:update');
 }
 

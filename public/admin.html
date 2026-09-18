@@ -352,9 +352,9 @@ input, textarea, select { font-family: inherit; }
   gap: 14px;
   background: linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
 }
-.bubble-row { display: flex; animation: fadeUp .2s ease; }
+.bubble-row { display: flex; animation: fadeUp .12s ease; }
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .bubble-row.mine { justify-content: flex-end; }
@@ -707,26 +707,47 @@ function enterDash() {
   if (me.role === 'owner') document.getElementById('nav-employees').classList.remove('hidden');
 
   socket = io({ auth: { adminToken: token } });
-  socket.on('connect', () => socket.emit('admin:watch-queue'));
-  socket.on('queue:update', () => { if (['queue', 'active', 'stats'].includes(currentTab)) renderTab(); });
+  socket.on('connect', () => {
+    socket.emit('admin:watch-queue');
+    // re-join open ticket if any after reconnect
+    if (openTicketId) socket.emit('ticket:join', { ticketId: openTicketId });
+  });
+  socket.on('queue:update', () => {
+    // دائماً حدث الشارة + أعد رسم التبويب الحالي فوراً
+    updateQueueBadge();
+    if (['queue', 'active', 'stats'].includes(currentTab)) renderTab();
+  });
   socket.on('ticket:history', (msgs) => {
     if (openTicketId) {
-      document.getElementById('tm-chat-scroll').innerHTML = '';
-      msgs.forEach(appendBubble);
-      scrollChat();
+      const scroll = document.getElementById('tm-chat-scroll');
+      if (scroll) {
+        scroll.innerHTML = '';
+        msgs.forEach(appendBubble);
+        scrollChat();
+      }
     }
   });
   socket.on('ticket:message', (m) => {
-    if (openTicketId === m.ticket_id) {
+    if (openTicketId && Number(openTicketId) === Number(m.ticket_id)) {
       appendBubble(m);
       scrollChat();
+    }
+    // لو الرسالة جديدة على طلب بالانتظار، حدث الطابور
+    if (currentTab === 'queue' || currentTab === 'active') {
+      updateQueueBadge();
     }
   });
   socket.on('ticket:typing', ({ text }) => {
     const el = document.getElementById('tm-typing');
     if (el) el.textContent = text ? ('🖊️ يكتب الآن: ' + text) : '';
   });
-  socket.on('ticket:status', () => { if (openTicketId) refreshTicketModal(); });
+  socket.on('ticket:status', (data) => {
+    if (openTicketId && data && Number(data.id) === Number(openTicketId)) {
+      // تحديث خفيف للحالة بدون إعادة فتح المودال
+    }
+    updateQueueBadge();
+    if (['queue', 'active', 'stats'].includes(currentTab)) renderTab();
+  });
 
   // WebRTC
   socket.on('rtc:call-request', ({ fromSocketId }) => showIncomingCall(fromSocketId));
@@ -752,6 +773,17 @@ function enterDash() {
     };
   });
   renderTab();
+}
+
+async function updateQueueBadge() {
+  try {
+    const rows = await api('/api/admin/tickets?status=waiting');
+    const badge = document.getElementById('badge-queue');
+    if (badge) {
+      badge.classList.toggle('hidden', !rows.length);
+      badge.textContent = rows.length;
+    }
+  } catch {}
 }
 
 function renderTab() {
