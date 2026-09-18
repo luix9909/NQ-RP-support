@@ -582,6 +582,35 @@ input, textarea, select { font-family: inherit; }
   .ticket-modal { height: 95vh; border-radius: 12px; }
   .emp-form { grid-template-columns: 1fr; }
 }
+
+/* Link buttons inside bubbles */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff !important;
+  transition: transform .15s, opacity .15s;
+  max-width: 100%;
+}
+.link-btn:hover { transform: translateY(-1px); opacity: .92; }
+.link-btn .icon { font-size: 16px; }
+.link-btn.discord { background: #5865F2; }
+.link-btn.whatsapp { background: #25D366; }
+.link-btn.telegram { background: #229ED9; }
+.link-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.link-btn.twitter, .link-btn.x { background: #000; border: 1px solid #333; }
+.link-btn.youtube { background: #FF0000; }
+.link-btn.tiktok { background: #010101; border: 1px solid #333; }
+.link-btn.snapchat { background: #FFFC00; color: #000 !important; }
+.link-btn.facebook { background: #1877F2; }
+.link-btn.generic { background: var(--teal-dim); border: 1px solid var(--teal); }
+
 </style>
 </head>
 <body>
@@ -1079,6 +1108,30 @@ async function openTicket(id) {
   };
 }
 
+function renderContentWithLinks(text) {
+  if (!text) return '';
+  const urlRegex = /(https?:\/\/[^\s<]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map(part => {
+    if (/^https?:\/\//.test(part)) {
+      const url = part;
+      const lower = url.toLowerCase();
+      let cls = 'generic', icon = '🔗', label = 'فتح الرابط';
+      if (lower.includes('discord.gg') || lower.includes('discord.com')) { cls='discord'; icon='💬'; label='انضم لديسكورد'; }
+      else if (lower.includes('wa.me') || lower.includes('whatsapp.com') || lower.includes('api.whatsapp.com')) { cls='whatsapp'; icon='🟢'; label='واتساب'; }
+      else if (lower.includes('t.me') || lower.includes('telegram.')) { cls='telegram'; icon='✈️'; label='تيليجرام'; }
+      else if (lower.includes('instagram.com') || lower.includes('instagr.am')) { cls='instagram'; icon='📷'; label='إنستقرام'; }
+      else if (lower.includes('twitter.com') || lower.includes('x.com')) { cls='x'; icon='𝕏'; label='تويتر / X'; }
+      else if (lower.includes('youtube.com') || lower.includes('youtu.be')) { cls='youtube'; icon='▶️'; label='يوتيوب'; }
+      else if (lower.includes('tiktok.com')) { cls='tiktok'; icon='🎵'; label='تيك توك'; }
+      else if (lower.includes('snapchat.com')) { cls='snapchat'; icon='👻'; label='سناب شات'; }
+      else if (lower.includes('facebook.com') || lower.includes('fb.com') || lower.includes('fb.me')) { cls='facebook'; icon='👤'; label='فيسبوك'; }
+      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="link-btn ${cls}"><span class="icon">${icon}</span> ${label}</a>`;
+    }
+    return escapeHtml(part).replace(/\n/g, '<br>');
+  }).join('');
+}
+
 function appendBubble(m) {
   const scroll = document.getElementById('tm-chat-scroll');
   if (!scroll) return;
@@ -1096,9 +1149,10 @@ function appendBubble(m) {
   }
 
   const showSender = m.sender_type !== 'system' && (m.sender_type === 'admin' || m.sender_type === 'customer');
+  const body = m.content ? renderContentWithLinks(m.content) : '';
   row.innerHTML = `<div class="bubble">
     ${showSender ? `<div class="sender">${escapeHtml(m.sender_name)}</div>` : ''}
-    ${m.content ? escapeHtml(m.content).replace(/\n/g, '<br>') : ''}
+    ${body}
     ${media}
     <div class="time">${formatTime(m.created_at)}</div>
   </div>`;

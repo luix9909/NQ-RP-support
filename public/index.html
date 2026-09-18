@@ -158,7 +158,7 @@ input, textarea { font-family: inherit; }
 .queue-info .item .lbl { font-size: 12px; color: var(--text-2); margin-top: 4px; }
 
 /* Chat screen */
-#chat-screen { display: none; flex-direction: column; height: 100vh; max-width: 640px; margin: 0 auto; }
+#chat-screen { display: none; flex-direction: column; height: 100vh; height: 100dvh; width: 100%; max-width: 100%; margin: 0; }
 #chat-screen.active { display: flex; }
 
 .chat-header {
@@ -207,7 +207,7 @@ input, textarea { font-family: inherit; }
 .bubble-row.theirs { justify-content: flex-start; }
 .bubble-row.system { justify-content: center; }
 .bubble {
-  max-width: 78%;
+  max-width: 85%;
   padding: 12px 16px;
   border-radius: 16px;
   font-size: 14.5px;
@@ -312,6 +312,35 @@ input, textarea { font-family: inherit; }
   margin-top: 16px;
   text-align: center;
 }
+
+/* Link buttons inside bubbles */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff !important;
+  transition: transform .15s, opacity .15s;
+  max-width: 100%;
+}
+.link-btn:hover { transform: translateY(-1px); opacity: .92; }
+.link-btn .icon { font-size: 16px; }
+.link-btn.discord { background: #5865F2; }
+.link-btn.whatsapp { background: #25D366; }
+.link-btn.telegram { background: #229ED9; }
+.link-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.link-btn.twitter, .link-btn.x { background: #000; border: 1px solid #333; }
+.link-btn.youtube { background: #FF0000; }
+.link-btn.tiktok { background: #010101; border: 1px solid #333; }
+.link-btn.snapchat { background: #FFFC00; color: #000 !important; }
+.link-btn.facebook { background: #1877F2; }
+.link-btn.generic { background: var(--teal-dim); border: 1px solid var(--teal); }
+
 </style>
 </head>
 <body>
@@ -584,6 +613,45 @@ function connectSocket() {
   socket.on('rtc:call-end', endCall);
 }
 
+function renderContentWithLinks(text) {
+  if (!text) return '';
+  // Detect URLs
+  const urlRegex = /(https?:\/\/[^\s<]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map(part => {
+    if (/^https?:\/\//.test(part)) {
+      const url = part;
+      const lower = url.toLowerCase();
+      let cls = 'generic';
+      let icon = '🔗';
+      let label = 'فتح الرابط';
+
+      if (lower.includes('discord.gg') || lower.includes('discord.com')) {
+        cls = 'discord'; icon = '💬'; label = 'انضم لديسكورد';
+      } else if (lower.includes('wa.me') || lower.includes('whatsapp.com') || lower.includes('api.whatsapp.com')) {
+        cls = 'whatsapp'; icon = '🟢'; label = 'واتساب';
+      } else if (lower.includes('t.me') || lower.includes('telegram.')) {
+        cls = 'telegram'; icon = '✈️'; label = 'تيليجرام';
+      } else if (lower.includes('instagram.com') || lower.includes('instagr.am')) {
+        cls = 'instagram'; icon = '📷'; label = 'إنستقرام';
+      } else if (lower.includes('twitter.com') || lower.includes('x.com')) {
+        cls = 'x'; icon = '𝕏'; label = 'تويتر / X';
+      } else if (lower.includes('youtube.com') || lower.includes('youtu.be')) {
+        cls = 'youtube'; icon = '▶️'; label = 'يوتيوب';
+      } else if (lower.includes('tiktok.com')) {
+        cls = 'tiktok'; icon = '🎵'; label = 'تيك توك';
+      } else if (lower.includes('snapchat.com') || lower.includes('snapchat.com/add')) {
+        cls = 'snapchat'; icon = '👻'; label = 'سناب شات';
+      } else if (lower.includes('facebook.com') || lower.includes('fb.com') || lower.includes('fb.me')) {
+        cls = 'facebook'; icon = '👤'; label = 'فيسبوك';
+      }
+
+      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="link-btn ${cls}"><span class="icon">${icon}</span> ${label}</a>`;
+    }
+    return escapeHtml(part).replace(/\n/g, '<br>');
+  }).join('');
+}
+
 function appendBubble(m) {
   const scroll = document.getElementById('chat-scroll');
   if (!scroll) return;
@@ -600,8 +668,9 @@ function appendBubble(m) {
     else if (m.attachment_type === 'audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
   }
 
+  const body = m.content ? renderContentWithLinks(m.content) : '';
   row.innerHTML = `<div class="bubble">
-    ${m.content ? escapeHtml(m.content).replace(/\n/g, '<br>') : ''}
+    ${body}
     ${media}
     <div class="time">${formatTime(m.created_at)}</div>
   </div>`;

@@ -396,6 +396,16 @@ io.on('connection', (socket) => {
     const msg = stmts.getMessageById.get(info.lastInsertRowid);
     io.to('ticket:' + ticketId).emit('ticket:message', msg);
 
+    // إذا الأدمن أرسل رسالة، تأكد أن الزبون ينتقل للشات (حتى لو ما تم accept رسمياً)
+    if (senderType === 'admin') {
+      const t2 = getTicket(ticketId);
+      if (t2 && t2.status === 'waiting') {
+        // نحولها إلى active تلقائياً لو الأدمن بدأ يتكلم
+        stmts.acceptTicket.run(socket.admin.id, socket.admin.name, ticketId);
+      }
+      io.to('ticket:' + ticketId).emit('ticket:status', ticketStatusPayload(ticketId));
+    }
+
     // Auto-reply if enabled and message is from customer
     if (senderType === 'customer' && autoModeTickets.has(Number(ticketId)) && finalContent) {
       setTimeout(() => {
