@@ -4,128 +4,584 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة الدعم الفني</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg-0:#08111a; --bg-1:#0d1a26; --bg-2:#132433; --line:#1f3547;
-  --teal:#14b8a6; --teal-2:#5eead4; --teal-dim:#0b6b60;
-  --text-0:#eaf3f5; --text-1:#9db3bd; --text-2:#5c7784;
-  --red:#ef4444; --green:#22c55e; --amber:#eab308;
-  --font:'Cairo',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+:root {
+  --bg-0: #060d14;
+  --bg-1: #0b1520;
+  --bg-2: #12202e;
+  --bg-3: #1a2d3f;
+  --line: #1e3348;
+  --line-2: #2a455c;
+  --teal: #14b8a6;
+  --teal-2: #5eead4;
+  --teal-dim: #0d6b62;
+  --teal-glow: rgba(20,184,166,.15);
+  --text-0: #f0f7fa;
+  --text-1: #a8c0cc;
+  --text-2: #6b8a99;
+  --red: #ef4444;
+  --green: #22c55e;
+  --amber: #eab308;
+  --purple: #a78bfa;
+  --font: 'Cairo', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --radius: 14px;
+  --shadow: 0 8px 32px rgba(0,0,0,.35);
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
-body{font-family:var(--font);background:var(--bg-0);color:var(--text-0);overflow:hidden;}
-.hidden{display:none !important;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
-input,textarea,select{font-family:inherit;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg-0);
+  color: var(--text-0);
+  overflow: hidden;
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(20,184,166,.06) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 100%, rgba(167,139,250,.04) 0%, transparent 50%);
+}
+.hidden { display: none !important; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font-family: inherit; }
 
-/* Login */
-#login-screen{height:100vh;display:flex;align-items:center;justify-content:center;}
-.login-card{width:400px;background:var(--bg-1);border:1px solid var(--line);border-radius:16px;padding:32px;}
-.login-card h1{font-size:19px;margin-bottom:4px;}
-.login-card p{font-size:12.5px;color:var(--text-2);margin-bottom:22px;}
-.field{margin-bottom:15px;}
-.field label{display:block;font-size:12.5px;color:var(--text-1);margin-bottom:7px;}
-.field input, .field textarea{width:100%;background:var(--bg-0);border:1px solid var(--line);border-radius:9px;padding:12px 14px;color:var(--text-0);font-size:14px;outline:none;}
-.field textarea{min-height:70px;resize:vertical;}
-.field input:focus,.field textarea:focus{border-color:var(--teal-dim);}
-.primary-btn{width:100%;background:linear-gradient(180deg,var(--teal-2),var(--teal));color:#022;font-weight:700;padding:13px;border-radius:10px;font-size:14px;}
-.err{color:var(--red);font-size:12.5px;margin-top:10px;min-height:14px;}
+/* ========== LOGIN ========== */
+#login-screen {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  width: 420px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--purple));
+}
+.login-card h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.login-card p { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 13px; color: var(--text-1); margin-bottom: 8px; font-weight: 500; }
+.field input {
+  width: 100%;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 14px 16px;
+  color: var(--text-0);
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-glow); }
+.primary-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--teal-2), var(--teal));
+  color: #022c26;
+  font-weight: 700;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 15px;
+  margin-top: 8px;
+  transition: transform .15s, box-shadow .15s;
+}
+.primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(20,184,166,.3); }
+.err { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 18px; }
 
-/* Dashboard shell */
-#dash{height:100vh;display:none;grid-template-columns:220px 1fr;}
-#dash.active{display:grid;}
-#nav{background:var(--bg-1);border-left:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px;}
-#nav .brand{font-weight:800;font-size:15px;padding:0 8px 18px;}
-.nav-btn{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:9px;font-size:13.5px;color:var(--text-1);margin-bottom:3px;}
-.nav-btn:hover{background:var(--bg-2);}
-.nav-btn.active{background:var(--bg-2);color:var(--text-0);}
-.nav-badge{margin-inline-start:auto;background:var(--teal-dim);color:#eafffb;font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:8px;}
-#nav .spacer{flex:1;}
-#nav .me{font-size:12px;color:var(--text-2);padding:10px 8px;border-top:1px solid var(--line);margin-top:8px;}
-#nav .me b{color:var(--text-0);display:block;font-size:13px;}
-#logout-btn{width:100%;margin-top:8px;padding:9px;border:1px solid var(--line);border-radius:8px;font-size:12px;color:var(--text-1);}
+/* ========== DASHBOARD ========== */
+#dash { height: 100vh; display: none; grid-template-columns: 240px 1fr; }
+#dash.active { display: grid; }
 
-#content{overflow-y:auto;padding:26px;}
-.page-title{font-size:19px;font-weight:800;margin-bottom:18px;}
+#nav {
+  background: var(--bg-1);
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 14px;
+}
+#nav .brand {
+  font-weight: 900;
+  font-size: 16px;
+  padding: 0 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#nav .brand span {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  font-size: 14px;
+  color: var(--text-1);
+  margin-bottom: 4px;
+  transition: all .15s;
+  font-weight: 500;
+}
+.nav-btn:hover { background: var(--bg-2); color: var(--text-0); }
+.nav-btn.active {
+  background: var(--teal-glow);
+  color: var(--teal-2);
+  font-weight: 600;
+}
+.nav-badge {
+  margin-inline-start: auto;
+  background: var(--teal);
+  color: #022;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  min-width: 22px;
+  text-align: center;
+}
+#nav .spacer { flex: 1; }
+#nav .me {
+  font-size: 12.5px;
+  color: var(--text-2);
+  padding: 14px 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 10px;
+}
+#nav .me b { color: var(--text-0); display: block; font-size: 14px; margin-bottom: 2px; }
+#logout-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-2);
+  transition: all .15s;
+}
+#logout-btn:hover { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.08); }
 
-/* ticket rows */
-.ticket-row{display:flex;align-items:center;gap:14px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;}
-.ticket-row:hover{border-color:var(--teal-dim);}
-.ticket-row .num{font-family:var(--mono);color:var(--teal-2);font-size:13px;width:32px;}
-.ticket-row .main{flex:1;}
-.ticket-row .name{font-size:14px;font-weight:700;}
-.ticket-row .subject{font-size:12.5px;color:var(--text-1);margin-top:2px;}
-.badge{font-size:10.5px;font-family:var(--mono);padding:3px 9px;border-radius:9px;border:1px solid var(--line);color:var(--text-2);}
-.badge.approved{color:var(--green);border-color:var(--green);}
-.badge.rejected{color:var(--red);border-color:var(--red);}
-.badge.waiting{color:var(--amber);border-color:var(--amber);}
-.badge.active{color:var(--teal-2);border-color:var(--teal);}
-.empty-note{color:var(--text-2);font-size:13px;padding:30px;text-align:center;}
+#main { display: flex; flex-direction: column; overflow: hidden; }
+#content { flex: 1; overflow-y: auto; padding: 28px 32px; }
 
-/* stat cards */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px;}
-.stat-card{background:var(--bg-1);border:1px solid var(--line);border-radius:12px;padding:18px;}
-.stat-card .v{font-family:var(--mono);font-size:26px;color:var(--teal-2);font-weight:700;}
-.stat-card .l{font-size:12px;color:var(--text-2);margin-top:6px;}
-.leaderboard{background:var(--bg-1);border:1px solid var(--line);border-radius:12px;padding:16px;}
-.leaderboard-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
-.leaderboard-row:last-child{border-bottom:none;}
+.page-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-/* ticket detail modal */
-.modal-bg{position:fixed;inset:0;background:rgba(4,7,12,.7);display:flex;align-items:center;justify-content:center;z-index:70;}
-.ticket-modal{width:620px;max-width:94vw;height:80vh;background:var(--bg-1);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;}
-.tm-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;}
-.tm-head .name{font-size:15.5px;font-weight:700;}
-.tm-head .subject{font-size:12.5px;color:var(--text-1);margin-top:3px;}
-.tm-head .actions{display:flex;gap:8px;align-items:center;}
-.call-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;}
-.call-btn.active{background:var(--red);border-color:var(--red);}
-.modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);}
-#tm-chat-scroll{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
-.bubble-row{display:flex;}
-.bubble-row.mine{justify-content:flex-end;}
-.bubble-row.theirs{justify-content:flex-start;}
-.bubble-row.system{justify-content:center;}
-.bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13.5px;line-height:1.6;}
-.bubble-row.mine .bubble{background:var(--teal-dim);color:#eafffb;border-radius:12px 12px 2px 12px;}
-.bubble-row.theirs .bubble{background:var(--bg-2);border:1px solid var(--line);border-radius:12px 12px 12px 2px;}
-.bubble-row.system .bubble{background:none;color:var(--text-2);font-size:11.5px;font-family:var(--mono);}
-.bubble img,.bubble video{max-width:100%;border-radius:8px;display:block;margin-top:6px;}
-.bubble audio{margin-top:6px;width:220px;}
-#tm-typing{padding:5px 20px;font-size:11px;color:var(--text-2);font-family:var(--mono);min-height:18px;}
-#tm-chat-form{display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--line);}
-#tm-chat-input{flex:1;background:var(--bg-0);border:1px solid var(--line);border-radius:9px;padding:10px 14px;color:var(--text-0);font-size:13.5px;outline:none;}
-.icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-1);}
-#tm-send{background:var(--teal);color:#022;font-weight:700;padding:0 14px;border-radius:9px;}
-.tm-actions-bar{padding:12px 16px;border-top:1px solid var(--line);background:var(--bg-0);}
-.outcome-row{display:flex;gap:8px;margin-bottom:8px;}
-.outcome-btn{flex:1;padding:9px;border-radius:8px;font-size:12.5px;font-weight:700;border:1px solid var(--line);}
-.outcome-btn.approve.selected{background:rgba(34,197,94,.15);color:var(--green);border-color:var(--green);}
-.outcome-btn.reject.selected{background:rgba(239,68,68,.12);color:var(--red);border-color:var(--red);}
-#tm-solution{width:100%;background:var(--bg-1);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--text-0);font-size:12.5px;min-height:50px;margin-bottom:8px;resize:vertical;}
-#tm-close-btn{width:100%;background:var(--amber);color:#221a00;font-weight:700;padding:10px;border-radius:8px;font-size:13px;}
-.accept-bar{padding:14px 16px;border-top:1px solid var(--line);}
-#tm-accept-btn{width:100%;background:var(--teal);color:#022;font-weight:700;padding:11px;border-radius:9px;}
-.closed-note{padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--text-1);}
-.closed-note b{color:var(--text-0);}
+/* Ticket rows */
+.ticket-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.ticket-row:hover {
+  border-color: var(--line-2);
+  background: var(--bg-2);
+  transform: translateX(-3px);
+}
+.ticket-row .num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal-2);
+  min-width: 42px;
+}
+.ticket-row .main { flex: 1; min-width: 0; }
+.ticket-row .name { font-weight: 700; font-size: 14.5px; margin-bottom: 3px; }
+.ticket-row .subject { font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.badge {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.badge.waiting { background: rgba(234,179,8,.12); color: var(--amber); }
+.badge.active { background: rgba(20,184,166,.12); color: var(--teal-2); }
+.badge.closed { background: rgba(107,138,153,.12); color: var(--text-2); }
+.tiny-btn {
+  padding: 7px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: all .15s;
+}
+.tiny-btn:hover { background: var(--bg-3); }
 
-/* employees */
-.emp-row{display:flex;align-items:center;gap:12px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:6px;}
-.emp-row .info{flex:1;font-size:13px;}
-.emp-row .info .email{color:var(--text-2);font-size:11.5px;font-family:var(--mono);}
-.tiny-btn{font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid var(--line);color:var(--text-1);}
-.tiny-btn:hover{border-color:var(--red);color:var(--red);}
-.add-emp-form{background:var(--bg-1);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;}
-.add-emp-form .field{margin-bottom:0;}
-.add-emp-form button{background:var(--teal);color:#022;font-weight:700;border-radius:8px;padding:12px 16px;font-size:12.5px;}
+.empty-note {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-2);
+  font-size: 14.5px;
+}
 
-.toast-wrap{position:fixed;bottom:20px;left:20px;z-index:100;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg-2);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-size:13px;}
+/* Stats cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.stat-card .label { font-size: 12.5px; color: var(--text-2); margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 800; font-family: var(--mono); color: var(--teal-2); }
 
-.search-row{margin-bottom:14px;}
-.search-row input{width:100%;max-width:320px;background:var(--bg-1);border:1px solid var(--line);border-radius:9px;padding:10px 14px;color:var(--text-0);font-size:13px;outline:none;}
+/* ========== TICKET MODAL (BIG & BEAUTIFUL) ========== */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 8, 14, .82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.ticket-modal {
+  width: 780px;
+  max-width: 96vw;
+  height: 88vh;
+  max-height: 900px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  animation: modalIn .25s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.tm-head {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: var(--bg-2);
+}
+.tm-head .name { font-size: 17px; font-weight: 800; }
+.tm-head .subject { font-size: 13px; color: var(--text-1); margin-top: 4px; max-width: 420px; }
+.tm-head .meta { font-size: 12px; color: var(--text-2); margin-top: 6px; font-family: var(--mono); }
+.tm-head .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.action-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s;
+  background: var(--bg-1);
+}
+.action-btn:hover { background: var(--bg-3); border-color: var(--line-2); }
+.action-btn.primary { background: var(--teal-dim); border-color: var(--teal); color: var(--teal-2); }
+.action-btn.danger { border-color: rgba(239,68,68,.4); color: var(--red); }
+.action-btn.danger:hover { background: rgba(239,68,68,.1); }
+.action-btn.auto-on { background: rgba(167,139,250,.15); border-color: var(--purple); color: var(--purple); }
+.call-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: all .15s;
+  background: var(--bg-1);
+}
+.call-btn:hover { background: var(--green); border-color: var(--green); }
+.call-btn.active { background: var(--red); border-color: var(--red); animation: pulse 1.2s infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.4); }
+  50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+}
+.modal-close {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.modal-close:hover { background: rgba(239,68,68,.1); border-color: var(--red); color: var(--red); }
+
+/* Chat area */
+#tm-chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
+}
+.bubble-row { display: flex; animation: fadeUp .2s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bubble-row.mine { justify-content: flex-end; }
+.bubble-row.theirs { justify-content: flex-start; }
+.bubble-row.system { justify-content: center; }
+.bubble {
+  max-width: 72%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  position: relative;
+}
+.bubble-row.mine .bubble {
+  background: linear-gradient(135deg, var(--teal-dim), #0a5c54);
+  color: #e6fffb;
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 0 2px 12px rgba(20,184,166,.15);
+}
+.bubble-row.theirs .bubble {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 16px 16px 16px 4px;
+}
+.bubble-row.system .bubble {
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-family: var(--mono);
+  max-width: 90%;
+  text-align: center;
+  padding: 6px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+}
+.bubble .sender {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  opacity: .7;
+}
+.bubble .time {
+  font-size: 10.5px;
+  opacity: .5;
+  margin-top: 6px;
+  font-family: var(--mono);
+  text-align: end;
+}
+.bubble img, .bubble video {
+  max-width: 100%;
+  border-radius: 10px;
+  display: block;
+  margin-top: 8px;
+  max-height: 280px;
+}
+.bubble audio { margin-top: 8px; width: 240px; }
+
+#tm-typing {
+  padding: 6px 28px;
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--mono);
+  min-height: 22px;
+}
+
+/* Input area */
+#tm-chat-form {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-2);
+  align-items: flex-end;
+}
+#tm-chat-input {
+  flex: 1;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 16px;
+  color: var(--text-0);
+  font-size: 14.5px;
+  outline: none;
+  resize: none;
+  min-height: 48px;
+  max-height: 120px;
+  line-height: 1.5;
+  transition: border-color .2s;
+}
+#tm-chat-input:focus { border-color: var(--teal); }
+.icon-btn {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  color: var(--text-1);
+  background: var(--bg-1);
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--bg-3); color: var(--text-0); }
+.icon-btn.send {
+  background: linear-gradient(135deg, var(--teal-2), var(--teal));
+  border: none;
+  color: #022c26;
+}
+.icon-btn.send:hover { transform: scale(1.05); }
+
+/* Commands hint */
+.cmd-hint {
+  padding: 6px 20px 0;
+  font-size: 11.5px;
+  color: var(--text-2);
+  font-family: var(--mono);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cmd-hint span {
+  background: var(--bg-0);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all .15s;
+}
+.cmd-hint span:hover { border-color: var(--teal); color: var(--teal-2); }
+
+/* Incoming call overlay */
+#call-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,8,14,.9);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+}
+#call-overlay .ring {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), #15803d);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  animation: pulse 1.2s infinite;
+}
+#call-overlay .btns { display: flex; gap: 20px; }
+#call-overlay button {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+#call-overlay .accept { background: var(--green); }
+#call-overlay .decline { background: var(--red); }
+
+/* Toast */
+#toast-wrap {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.toast {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  box-shadow: var(--shadow);
+  animation: fadeUp .25s ease;
+}
+
+/* Search */
+.search-row { margin-bottom: 18px; }
+.search-row input {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 12px 16px;
+  color: var(--text-0);
+  font-size: 14px;
+  outline: none;
+}
+.search-row input:focus { border-color: var(--teal); }
+
+/* Employees */
+.emp-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.emp-form input {
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--text-0);
+  font-size: 13.5px;
+  outline: none;
+}
+.emp-form input:focus { border-color: var(--teal); }
+.emp-list .ticket-row { cursor: default; }
+.emp-list .ticket-row:hover { transform: none; }
+
+/* Responsive */
+@media (max-width: 700px) {
+  #dash { grid-template-columns: 1fr; }
+  #nav { display: none; }
+  .ticket-modal { height: 95vh; border-radius: 12px; }
+  .emp-form { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -134,98 +590,147 @@ input,textarea,select{font-family:inherit;}
   <div class="login-card">
     <h1>لوحة الدعم الفني</h1>
     <p>تسجيل دخول الموظفين والإدارة</p>
-    <div class="field"><label>البريد الإلكتروني</label><input id="li-email" type="email"></div>
-    <div class="field"><label>كلمة المرور</label><input id="li-pass" type="password"></div>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input id="li-email" type="email" placeholder="name@example.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
     <button class="primary-btn" id="li-submit">دخول</button>
     <div class="err" id="li-err"></div>
   </div>
 </div>
 
 <div id="dash">
-  <div id="nav">
-    <div class="brand">🎧 لوحة الدعم</div>
-    <button class="nav-btn active" data-tab="queue">🕐 الطابور <span class="nav-badge hidden" id="badge-queue">0</span></button>
-    <button class="nav-btn" data-tab="active">💬 نشط الآن</button>
-    <button class="nav-btn" data-tab="archive">🗂 الأرشيف</button>
-    <button class="nav-btn" data-tab="stats">📊 التحليلات</button>
-    <button class="nav-btn hidden" data-tab="employees" id="nav-employees">👥 الموظفون</button>
+  <nav id="nav">
+    <div class="brand"><span>🎧</span> الدعم الفني</div>
+    <button class="nav-btn active" data-tab="queue">الطابور <span class="nav-badge hidden" id="badge-queue">0</span></button>
+    <button class="nav-btn" data-tab="active">نشط الآن</button>
+    <button class="nav-btn" data-tab="archive">الأرشيف</button>
+    <button class="nav-btn" data-tab="stats">الإحصائيات</button>
+    <button class="nav-btn hidden" data-tab="employees" id="nav-employees">الموظفون</button>
     <div class="spacer"></div>
-    <div class="me">مسجل كـ<b id="me-name">—</b></div>
+    <div class="me">مسجل كـ <b id="me-name">—</b></div>
     <button id="logout-btn">خروج</button>
+  </nav>
+  <div id="main">
+    <div id="content"></div>
   </div>
-  <div id="content"></div>
 </div>
 
-<div class="toast-wrap" id="toast-wrap"></div>
-<audio id="remote-audio" autoplay></audio>
+<div id="toast-wrap"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-let token = localStorage.getItem('support_admin_token');
+let token = localStorage.getItem('support_admin_token') || null;
 let me = null;
 let socket = null;
 let currentTab = 'queue';
 let openTicketId = null;
-let typingTimer = null;
-let pc = null, localStream = null, callActive = false, peerSocketId = null;
+let pc = null;
+let peerSocketId = null;
+let localStream = null;
 
-const ICE_SERVERS = [
-  { urls:'stun:stun.l.google.com:19302' },
-  { urls:'stun:stun.relay.metered.ca:80' },
-  { urls:'turn:global.relay.metered.ca:80', username:'openrelayproject', credential:'openrelayproject' }
-];
-
-function toast(msg){
-  const el = document.createElement('div'); el.className='toast'; el.textContent=msg;
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
   document.getElementById('toast-wrap').appendChild(el);
-  setTimeout(()=>el.remove(), 3500);
+  setTimeout(() => el.remove(), 3500);
 }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-async function api(path, opts={}){
-  const res = await fetch(path, { ...opts, headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token, ...(opts.headers||{}) } });
-  const data = await res.json().catch(()=>({}));
-  if(!res.ok) throw new Error(data.error||'خطأ');
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatTime(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso + (iso.includes('Z') ? '' : 'Z'));
+    return d.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+  } catch { return ''; }
+}
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    ...opts,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, ...(opts.headers || {}) }
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'خطأ');
   return data;
 }
 
-document.getElementById('li-submit').onclick = async ()=>{
+// Login
+document.getElementById('li-submit').onclick = async () => {
   const email = document.getElementById('li-email').value.trim();
   const password = document.getElementById('li-pass').value;
-  const err = document.getElementById('li-err'); err.textContent='';
-  if(!email || !password){ err.textContent='أدخل الإيميل وكلمة المرور'; return; }
-  try{
-    const res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,password}) });
+  const err = document.getElementById('li-err');
+  err.textContent = '';
+  if (!email || !password) { err.textContent = 'أدخل الإيميل وكلمة المرور'; return; }
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
     const data = await res.json();
-    if(!res.ok){ err.textContent = data.error; return; }
-    token = data.token; me = data.admin;
+    if (!res.ok) { err.textContent = data.error; return; }
+    token = data.token;
+    me = data.admin;
     localStorage.setItem('support_admin_token', token);
     enterDash();
-  }catch(e){ err.textContent='تعذر الاتصال بالسيرفر'; }
+  } catch (e) {
+    err.textContent = 'تعذر الاتصال بالسيرفر';
+  }
 };
-document.getElementById('logout-btn').onclick = ()=>{ localStorage.removeItem('support_admin_token'); location.reload(); };
+document.getElementById('logout-btn').onclick = () => {
+  localStorage.removeItem('support_admin_token');
+  location.reload();
+};
 
-async function tryAutoLogin(){
-  if(!token) return;
-  try{ const data = await api('/api/admin/me'); me = data.admin; enterDash(); }
-  catch(e){ localStorage.removeItem('support_admin_token'); token=null; }
+async function tryAutoLogin() {
+  if (!token) return;
+  try {
+    const data = await api('/api/admin/me');
+    me = data.admin;
+    enterDash();
+  } catch {
+    localStorage.removeItem('support_admin_token');
+    token = null;
+  }
 }
 
-function enterDash(){
-  document.getElementById('login-screen').style.display='none';
+function enterDash() {
+  document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dash').classList.add('active');
-  document.getElementById('me-name').textContent = me.name + (me.role==='owner' ? ' (المالك)' : '');
-  if(me.role==='owner') document.getElementById('nav-employees').classList.remove('hidden');
+  document.getElementById('me-name').textContent = me.name + (me.role === 'owner' ? ' (المالك)' : '');
+  if (me.role === 'owner') document.getElementById('nav-employees').classList.remove('hidden');
 
-  socket = io({ auth:{ adminToken: token } });
-  socket.on('connect', ()=> socket.emit('admin:watch-queue'));
-  socket.on('queue:update', ()=>{ if(['queue','active','stats'].includes(currentTab)) renderTab(); });
-  socket.on('ticket:history', (msgs)=>{ if(openTicketId){ document.getElementById('tm-chat-scroll').innerHTML=''; msgs.forEach(appendBubble); } });
-  socket.on('ticket:message', (m)=>{ if(openTicketId===m.ticket_id) appendBubble(m); });
-  socket.on('ticket:typing', ({text})=>{ document.getElementById('tm-typing').textContent = text ? ('🖊️ يكتب الآن: '+text) : ''; });
-  socket.on('ticket:status', ()=>{ if(openTicketId) refreshTicketModal(); });
+  socket = io({ auth: { adminToken: token } });
+  socket.on('connect', () => socket.emit('admin:watch-queue'));
+  socket.on('queue:update', () => { if (['queue', 'active', 'stats'].includes(currentTab)) renderTab(); });
+  socket.on('ticket:history', (msgs) => {
+    if (openTicketId) {
+      document.getElementById('tm-chat-scroll').innerHTML = '';
+      msgs.forEach(appendBubble);
+      scrollChat();
+    }
+  });
+  socket.on('ticket:message', (m) => {
+    if (openTicketId === m.ticket_id) {
+      appendBubble(m);
+      scrollChat();
+    }
+  });
+  socket.on('ticket:typing', ({ text }) => {
+    const el = document.getElementById('tm-typing');
+    if (el) el.textContent = text ? ('🖊️ يكتب الآن: ' + text) : '';
+  });
+  socket.on('ticket:status', () => { if (openTicketId) refreshTicketModal(); });
 
-  socket.on('rtc:call-request', ({fromSocketId})=> showIncomingCall(fromSocketId));
-  socket.on('rtc:offer', async ({fromSocketId, sdp})=>{
+  // WebRTC
+  socket.on('rtc:call-request', ({ fromSocketId }) => showIncomingCall(fromSocketId));
+  socket.on('rtc:offer', async ({ fromSocketId, sdp }) => {
     peerSocketId = fromSocketId;
     await ensurePC();
     await pc.setRemoteDescription(sdp);
@@ -233,14 +738,14 @@ function enterDash(){
     await pc.setLocalDescription(answer);
     socket.emit('rtc:answer', { toSocketId: fromSocketId, sdp: answer });
   });
-  socket.on('rtc:answer', async ({sdp})=>{ await pc?.setRemoteDescription(sdp); });
-  socket.on('rtc:ice', async ({candidate})=>{ try{ await pc?.addIceCandidate(candidate); }catch(e){} });
+  socket.on('rtc:answer', async ({ sdp }) => { await pc?.setRemoteDescription(sdp); });
+  socket.on('rtc:ice', async ({ candidate }) => { try { await pc?.addIceCandidate(candidate); } catch {} });
   socket.on('rtc:call-end', endCall);
-  socket.on('rtc:call-decline', ()=>{ endCall(); toast('تم رفض الاتصال'); });
+  socket.on('rtc:call-decline', () => { endCall(); toast('تم رفض الاتصال'); });
 
-  document.querySelectorAll('.nav-btn[data-tab]').forEach(btn=>{
-    btn.onclick = ()=>{
-      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentTab = btn.dataset.tab;
       renderTab();
@@ -249,291 +754,410 @@ function enterDash(){
   renderTab();
 }
 
-async function renderTab(){
+function renderTab() {
   const c = document.getElementById('content');
-  if(currentTab==='queue') return renderQueueTab(c);
-  if(currentTab==='active') return renderActiveTab(c);
-  if(currentTab==='archive') return renderArchiveTab(c);
-  if(currentTab==='stats') return renderStatsTab(c);
-  if(currentTab==='employees') return renderEmployeesTab(c);
+  if (currentTab === 'queue') return renderQueueTab(c);
+  if (currentTab === 'active') return renderActiveTab(c);
+  if (currentTab === 'archive') return renderArchiveTab(c);
+  if (currentTab === 'stats') return renderStatsTab(c);
+  if (currentTab === 'employees') return renderEmployeesTab(c);
 }
 
-async function renderQueueTab(c){
+async function renderQueueTab(c) {
   const rows = await api('/api/admin/tickets?status=waiting');
-  document.getElementById('badge-queue').classList.toggle('hidden', !rows.length);
-  document.getElementById('badge-queue').textContent = rows.length;
-  c.innerHTML = `<div class="page-title">الطابور (${rows.length})</div>` +
-    (rows.length ? rows.map(t=>`
+  const badge = document.getElementById('badge-queue');
+  badge.classList.toggle('hidden', !rows.length);
+  badge.textContent = rows.length;
+  c.innerHTML = `<div class="page-title">الطابور <span style="color:var(--text-2);font-weight:500;font-size:15px">(${rows.length})</span></div>` +
+    (rows.length ? rows.map(t => `
       <div class="ticket-row" data-id="${t.id}">
         <div class="num">#${t.id}</div>
-        <div class="main"><div class="name">${escapeHtml(t.customer_name)}</div><div class="subject">${escapeHtml(t.subject)}</div></div>
-        <span class="badge waiting">دور ${t.position}</span>
+        <div class="main">
+          <div class="name">${escapeHtml(t.customer_name)}</div>
+          <div class="subject">${escapeHtml(t.subject)}</div>
+        </div>
+        <span class="badge waiting">دور ${t.position || '—'}</span>
         <button class="tiny-btn accept-inline" data-id="${t.id}" style="color:var(--teal-2);border-color:var(--teal-dim);">قبول</button>
-      </div>`).join('') : '<div class="empty-note">لا يوجد أحد بالطابور حالياً</div>');
-  c.querySelectorAll('.accept-inline').forEach(btn=>{
-    btn.onclick = async (e)=>{ e.stopPropagation(); await acceptTicket(btn.dataset.id); };
+      </div>`).join('') : '<div class="empty-note">لا يوجد أحد بالطابور حالياً ✨</div>');
+  c.querySelectorAll('.accept-inline').forEach(btn => {
+    btn.onclick = async (e) => { e.stopPropagation(); await acceptTicket(btn.dataset.id); };
   });
-  c.querySelectorAll('.ticket-row').forEach(row=> row.onclick = ()=> openTicket(row.dataset.id));
+  c.querySelectorAll('.ticket-row').forEach(row => row.onclick = () => openTicket(row.dataset.id));
 }
 
-async function renderActiveTab(c){
+async function renderActiveTab(c) {
   const rows = await api('/api/admin/tickets?status=active');
-  c.innerHTML = `<div class="page-title">نشط الآن (${rows.length})</div>` +
-    (rows.length ? rows.map(t=>`
+  c.innerHTML = `<div class="page-title">نشط الآن <span style="color:var(--text-2);font-weight:500;font-size:15px">(${rows.length})</span></div>` +
+    (rows.length ? rows.map(t => `
       <div class="ticket-row" data-id="${t.id}">
         <div class="num">#${t.id}</div>
-        <div class="main"><div class="name">${escapeHtml(t.customer_name)}</div><div class="subject">${escapeHtml(t.subject)}</div></div>
-        <span class="badge active">${escapeHtml(t.assigned_admin_name||'')}</span>
+        <div class="main">
+          <div class="name">${escapeHtml(t.customer_name)}</div>
+          <div class="subject">${escapeHtml(t.subject)}</div>
+        </div>
+        <span class="badge active">${escapeHtml(t.assigned_admin_name || '')}</span>
       </div>`).join('') : '<div class="empty-note">ما فيه محادثات نشطة الآن</div>');
-  c.querySelectorAll('.ticket-row').forEach(row=> row.onclick = ()=> openTicket(row.dataset.id));
+  c.querySelectorAll('.ticket-row').forEach(row => row.onclick = () => openTicket(row.dataset.id));
 }
 
-async function renderArchiveTab(c){
+async function renderArchiveTab(c) {
   c.innerHTML = `<div class="page-title">الأرشيف</div>
     <div class="search-row"><input id="archive-search" placeholder="ابحث بالاسم أو الموضوع..."></div>
     <div id="archive-list"></div>`;
   const rows = await api('/api/admin/tickets?status=closed');
-  function draw(filter){
+  function draw(filter) {
     const list = document.getElementById('archive-list');
-    const f = (filter||'').trim();
-    const filtered = f ? rows.filter(t=> t.customer_name.includes(f) || t.subject.includes(f)) : rows;
-    list.innerHTML = filtered.length ? filtered.map(t=>`
+    const f = (filter || '').trim();
+    const filtered = f ? rows.filter(t => t.customer_name.includes(f) || t.subject.includes(f)) : rows;
+    list.innerHTML = filtered.length ? filtered.map(t => `
       <div class="ticket-row" data-id="${t.id}">
         <div class="num">#${t.id}</div>
-        <div class="main"><div class="name">${escapeHtml(t.customer_name)}</div><div class="subject">${escapeHtml(t.subject)}</div></div>
-        <span class="badge ${t.outcome||''}">${t.outcome==='approved'?'مقبول':t.outcome==='rejected'?'مرفوض':'مغلق'}</span>
-      </div>`).join('') : '<div class="empty-note">لا نتائج</div>';
-    list.querySelectorAll('.ticket-row').forEach(row=> row.onclick = ()=> openTicket(row.dataset.id));
+        <div class="main">
+          <div class="name">${escapeHtml(t.customer_name)}</div>
+          <div class="subject">${escapeHtml(t.subject)}</div>
+        </div>
+        <span class="badge closed">${t.outcome === 'approved' ? '✅ موافقة' : t.outcome === 'rejected' ? '❌ رفض' : 'مغلق'}</span>
+      </div>`).join('') : '<div class="empty-note">لا توجد نتائج</div>';
+    list.querySelectorAll('.ticket-row').forEach(row => row.onclick = () => openTicket(row.dataset.id));
   }
-  draw('');
-  document.getElementById('archive-search').oninput = (e)=> draw(e.target.value);
+  draw();
+  document.getElementById('archive-search').oninput = (e) => draw(e.target.value);
 }
 
-async function renderStatsTab(c){
+async function renderStatsTab(c) {
   const s = await api('/api/admin/stats');
-  const mins = Math.round(s.avgHandlingSeconds/60);
-  c.innerHTML = `<div class="page-title">التحليلات</div>
+  c.innerHTML = `<div class="page-title">الإحصائيات</div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="v">${s.todayResolved}</div><div class="l">تم إنجازها اليوم</div></div>
-      <div class="stat-card"><div class="v">${s.waitingNow}</div><div class="l">بالطابور الآن</div></div>
-      <div class="stat-card"><div class="v">${s.activeNow}</div><div class="l">محادثات نشطة</div></div>
-      <div class="stat-card"><div class="v">${s.totalResolved}</div><div class="l">إجمالي المنجز</div></div>
-      <div class="stat-card"><div class="v">${s.totalTickets}</div><div class="l">إجمالي الطلبات</div></div>
-      <div class="stat-card"><div class="v">${mins} د</div><div class="l">متوسط وقت المعالجة</div></div>
+      <div class="stat-card"><div class="label">تم حلها اليوم</div><div class="value">${s.todayResolved}</div></div>
+      <div class="stat-card"><div class="label">بالانتظار</div><div class="value">${s.waitingNow}</div></div>
+      <div class="stat-card"><div class="label">نشط الآن</div><div class="value">${s.activeNow}</div></div>
+      <div class="stat-card"><div class="label">إجمالي الطلبات</div><div class="value">${s.totalTickets}</div></div>
+      <div class="stat-card"><div class="label">تم حلها (الكل)</div><div class="value">${s.totalResolved}</div></div>
+      <div class="stat-card"><div class="label">متوسط وقت المعالجة</div><div class="value" style="font-size:20px">${Math.round(s.avgHandlingSeconds / 60)} د</div></div>
     </div>
-    <div class="leaderboard">
-      <div style="font-size:13px;color:var(--text-1);margin-bottom:8px;">الأداء اليوم حسب الموظف</div>
-      ${s.byAdminToday.length ? s.byAdminToday.map(a=>`<div class="leaderboard-row"><span>${escapeHtml(a.name)}</span><b>${a.c}</b></div>`).join('') : '<div class="empty-note">ما فيه بيانات بعد</div>'}
+    <div class="page-title" style="font-size:16px;margin-top:10px">أداء الموظفين اليوم</div>
+    <div style="background:var(--bg-1);border:1px solid var(--line);border-radius:14px;padding:16px;">
+      ${s.byAdminToday.length ? s.byAdminToday.map(r => `
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;">
+          <span>${escapeHtml(r.name)}</span>
+          <span style="font-family:var(--mono);color:var(--teal-2);font-weight:700">${r.c}</span>
+        </div>`).join('') : '<div class="empty-note" style="padding:30px">لا توجد بيانات بعد</div>'}
     </div>`;
 }
 
-async function renderEmployeesTab(c){
-  if(me.role!=='owner') return;
+async function renderEmployeesTab(c) {
   const rows = await api('/api/admin/admins');
   c.innerHTML = `<div class="page-title">الموظفون</div>
-    <div class="add-emp-form">
-      <div class="field"><label>الاسم</label><input id="ne-name"></div>
-      <div class="field"><label>الإيميل</label><input id="ne-email" type="email"></div>
-      <div class="field"><label>كلمة المرور</label><input id="ne-pass" type="password"></div>
-      <button id="ne-submit">+ إضافة</button>
+    <div class="emp-form">
+      <input id="emp-name" placeholder="الاسم">
+      <input id="emp-email" placeholder="الإيميل">
+      <input id="emp-pass" type="password" placeholder="كلمة المرور">
+      <button class="primary-btn" id="emp-add" style="width:auto;padding:11px 22px;">إضافة</button>
     </div>
-    <div id="emp-list"></div>`;
-  const list = document.getElementById('emp-list');
-  list.innerHTML = rows.map(a=>`
-    <div class="emp-row">
-      <div class="info"><b>${escapeHtml(a.name)}</b> ${a.role==='owner'?' · المالك':''}<div class="email">${escapeHtml(a.email)}</div></div>
-      ${a.role!=='owner' ? `<button class="tiny-btn" data-id="${a.id}">حذف</button>` : ''}
-    </div>`).join('');
-  list.querySelectorAll('.tiny-btn').forEach(btn=>{
-    btn.onclick = async ()=>{
-      if(!confirm('تأكيد حذف هذا الموظف؟')) return;
-      try{ await api('/api/admin/admins/'+btn.dataset.id, { method:'DELETE' }); renderEmployeesTab(c); }
-      catch(e){ toast(e.message); }
-    };
-  });
-  document.getElementById('ne-submit').onclick = async ()=>{
-    const name = document.getElementById('ne-name').value.trim();
-    const email = document.getElementById('ne-email').value.trim();
-    const password = document.getElementById('ne-pass').value;
-    try{
-      await api('/api/admin/admins', { method:'POST', body: JSON.stringify({name,email,password}) });
+    <div class="emp-list">
+      ${rows.map(a => `
+        <div class="ticket-row">
+          <div class="main">
+            <div class="name">${escapeHtml(a.name)} ${a.role === 'owner' ? '<span style="color:var(--amber);font-size:12px">(المالك)</span>' : ''}</div>
+            <div class="subject">${escapeHtml(a.email)}</div>
+          </div>
+          ${a.role !== 'owner' ? `<button class="tiny-btn del-emp" data-id="${a.id}" style="color:var(--red);border-color:rgba(239,68,68,.3)">حذف</button>` : ''}
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('emp-add').onclick = async () => {
+    try {
+      await api('/api/admin/admins', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('emp-name').value.trim(),
+          email: document.getElementById('emp-email').value.trim(),
+          password: document.getElementById('emp-pass').value
+        })
+      });
       toast('تمت إضافة الموظف');
       renderEmployeesTab(c);
-    }catch(e){ toast(e.message); }
+    } catch (e) { toast(e.message); }
   };
+  c.querySelectorAll('.del-emp').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('حذف هذا الموظف؟')) return;
+      await api('/api/admin/admins/' + btn.dataset.id, { method: 'DELETE' });
+      toast('تم الحذف');
+      renderEmployeesTab(c);
+    };
+  });
 }
 
-async function acceptTicket(id){
-  try{
-    await api(`/api/admin/tickets/${id}/accept`, { method:'POST' });
-    renderTab();
+async function acceptTicket(id) {
+  try {
+    await api('/api/admin/tickets/' + id + '/accept', { method: 'POST' });
+    toast('تم قبول الطلب');
     openTicket(id);
-  }catch(e){ toast(e.message); }
+    renderTab();
+  } catch (e) { toast(e.message); }
 }
 
-/* ============ Ticket detail modal ============ */
-async function openTicket(id){
+async function openTicket(id) {
   openTicketId = Number(id);
-  const t = await api('/api/admin/tickets/'+id);
-  const bg = document.createElement('div');
-  bg.className='modal-bg'; bg.id='ticket-modal-bg';
-  bg.innerHTML = `
+  const t = await api('/api/admin/tickets/' + id);
+  const isAuto = t.autoMode;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  modal.id = 'ticket-modal-bg';
+  modal.innerHTML = `
     <div class="ticket-modal">
       <div class="tm-head">
         <div>
-          <div class="name">${escapeHtml(t.customer_name)} ${t.customer_contact?(' · '+escapeHtml(t.customer_contact)):''}</div>
+          <div class="name">${escapeHtml(t.customer_name)} <span style="font-family:var(--mono);color:var(--text-2);font-size:13px;font-weight:500">#${t.id}</span></div>
           <div class="subject">${escapeHtml(t.subject)}</div>
+          <div class="meta">${t.status === 'active' ? '🟢 نشط' : t.status === 'waiting' ? '🟡 بالانتظار' : '⚪ مغلق'} ${t.assigned_admin_name ? '• ' + escapeHtml(t.assigned_admin_name) : ''}</div>
         </div>
         <div class="actions">
-          <button class="call-btn" id="tm-call-btn" title="اتصال صوتي">🎙️</button>
-          <button class="modal-close" id="tm-close">✕</button>
+          ${t.status === 'active' ? `
+            <button class="action-btn ${isAuto ? 'auto-on' : ''}" id="btn-auto">${isAuto ? '🤖 AI مفعّل' : '🤖 تفعيل AI'}</button>
+            <button class="call-btn" id="btn-call" title="اتصال صوتي">📞</button>
+            <button class="action-btn primary" id="btn-close-ok">✅ موافقة</button>
+            <button class="action-btn danger" id="btn-close-no">❌ رفض</button>
+          ` : ''}
+          <button class="modal-close" id="btn-modal-close">✕</button>
         </div>
       </div>
       <div id="tm-chat-scroll"></div>
       <div id="tm-typing"></div>
-      <div id="tm-footer"></div>
-      <form id="tm-chat-form" style="display:${t.status==='closed'?'none':'flex'}">
-        <button type="button" class="icon-btn" id="tm-attach">📎</button>
-        <input type="file" id="tm-file" class="hidden" accept="image/*,video/*,audio/*">
-        <input id="tm-chat-input" placeholder="اكتب رسالتك...">
-        <button type="button" id="tm-send">إرسال</button>
+      <div class="cmd-hint">
+        <span data-cmd="/auto">/auto</span>
+        <span data-cmd="/wait">/wait</span>
+        <span data-cmd="/close approved">/close approved</span>
+        <span data-cmd="/close rejected">/close rejected</span>
+        <span data-cmd="/help">/help</span>
+      </div>
+      <form id="tm-chat-form">
+        <button type="button" class="icon-btn" id="btn-attach" title="إرفاق ملف">📎</button>
+        <textarea id="tm-chat-input" placeholder="اكتب رسالة... أو استخدم / للأوامر" rows="1"></textarea>
+        <button type="submit" class="icon-btn send">➤</button>
       </form>
     </div>`;
-  document.body.appendChild(bg);
-  bg.onclick = (e)=>{ if(e.target===bg) closeTicketModal(); };
-  document.getElementById('tm-close').onclick = closeTicketModal;
+  document.body.appendChild(modal);
 
-  renderTmFooter(t);
   socket.emit('ticket:join', { ticketId: id });
 
-  document.getElementById('tm-send').onclick = sendTmMessage;
-  document.getElementById('tm-chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') sendTmMessage(); });
-  document.getElementById('tm-attach').onclick = ()=> document.getElementById('tm-file').click();
-  document.getElementById('tm-file').onchange = async (e)=>{
-    const file = e.target.files[0]; if(!file) return;
-    const fd = new FormData(); fd.append('file', file);
-    const res = await fetch('/api/upload', { method:'POST', headers:{Authorization:'Bearer '+token}, body: fd });
-    const data = await res.json();
-    if(!res.ok){ toast(data.error); return; }
-    socket.emit('ticket:message', { ticketId:id, content:'', attachmentUrl:data.url, attachmentType:data.type });
-    e.target.value='';
+  document.getElementById('btn-modal-close').onclick = () => {
+    openTicketId = null;
+    modal.remove();
+    endCall();
   };
-  document.getElementById('tm-call-btn').onclick = ()=>{
-    if(callActive){ socket.emit('rtc:call-end', { ticketId:id }); endCall(); return; }
-    socket.emit('rtc:call-request', { ticketId:id });
-    toast('جاري إرسال طلب الاتصال...');
-  };
-}
+  modal.onclick = (e) => { if (e.target === modal) { openTicketId = null; modal.remove(); endCall(); } };
 
-function sendTmMessage(){
+  // Commands chips
+  modal.querySelectorAll('.cmd-hint span').forEach(s => {
+    s.onclick = () => {
+      const input = document.getElementById('tm-chat-input');
+      input.value = s.dataset.cmd;
+      input.focus();
+    };
+  });
+
+  // Auto toggle
+  const autoBtn = document.getElementById('btn-auto');
+  if (autoBtn) {
+    autoBtn.onclick = () => {
+      socket.emit('ticket:message', {
+        ticketId: id,
+        content: isAuto ? '/auto off' : '/auto'
+      });
+      setTimeout(() => { modal.remove(); openTicket(id); }, 300);
+    };
+  }
+
+  // Close buttons
+  const closeOk = document.getElementById('btn-close-ok');
+  const closeNo = document.getElementById('btn-close-no');
+  if (closeOk) closeOk.onclick = async () => {
+    const solution = prompt('ملخص الحل (اختياري):') || 'تم حل المشكلة';
+    await api('/api/admin/tickets/' + id + '/close', { method: 'POST', body: JSON.stringify({ outcome: 'approved', solution }) });
+    toast('تم الإغلاق بالموافقة');
+    modal.remove();
+    openTicketId = null;
+    renderTab();
+  };
+  if (closeNo) closeNo.onclick = async () => {
+    const solution = prompt('سبب الرفض (اختياري):') || '';
+    await api('/api/admin/tickets/' + id + '/close', { method: 'POST', body: JSON.stringify({ outcome: 'rejected', solution }) });
+    toast('تم الإغلاق بالرفض');
+    modal.remove();
+    openTicketId = null;
+    renderTab();
+  };
+
+  // Call
+  const callBtn = document.getElementById('btn-call');
+  if (callBtn) {
+    callBtn.onclick = async () => {
+      if (pc) { endCall(); return; }
+      callBtn.classList.add('active');
+      await ensurePC();
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      socket.emit('rtc:call-request', { ticketId: id });
+      socket.emit('rtc:offer', { toSocketId: peerSocketId, sdp: offer });
+    };
+  }
+
+  // Attach
+  document.getElementById('btn-attach').onclick = () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*,video/*,audio/*';
+    inp.onchange = async () => {
+      if (!inp.files[0]) return;
+      const fd = new FormData();
+      fd.append('file', inp.files[0]);
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        socket.emit('ticket:message', { ticketId: id, content: '', attachmentUrl: data.url, attachmentType: data.type });
+      } catch (e) { toast(e.message); }
+    };
+    inp.click();
+  };
+
+  // Send message
+  const form = document.getElementById('tm-chat-form');
   const input = document.getElementById('tm-chat-input');
-  if(!input.value.trim()) return;
-  socket.emit('ticket:message', { ticketId: openTicketId, content: input.value });
-  input.value='';
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const content = input.value.trim();
+    if (!content) return;
+    socket.emit('ticket:message', { ticketId: id, content });
+    input.value = '';
+    input.style.height = 'auto';
+  };
+  input.oninput = () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    socket.emit('ticket:typing', { ticketId: id, text: input.value.slice(0, 80) });
+  };
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  };
 }
 
-function renderTmFooter(t){
-  const footer = document.getElementById('tm-footer');
-  if(t.status==='waiting'){
-    footer.innerHTML = `<div class="accept-bar"><button id="tm-accept-btn">قبول هذا الطلب</button></div>`;
-    document.getElementById('tm-accept-btn').onclick = async ()=>{
-      try{ await api(`/api/admin/tickets/${t.id}/accept`, {method:'POST'}); refreshTicketModal(); renderTab(); }
-      catch(e){ toast(e.message); }
-    };
-  } else if(t.status==='active'){
-    footer.innerHTML = `
-      <div class="tm-actions-bar">
-        <div class="outcome-row">
-          <button class="outcome-btn approve" id="tm-approve">✔ قبول الطلب</button>
-          <button class="outcome-btn reject" id="tm-reject">✘ رفض الطلب</button>
-        </div>
-        <textarea id="tm-solution" placeholder="الحل / ملاحظات (اختياري)"></textarea>
-        <button id="tm-close-btn">إنهاء الطلب</button>
-      </div>`;
-    let outcome = null;
-    document.getElementById('tm-approve').onclick = ()=>{
-      outcome='approved';
-      document.getElementById('tm-approve').classList.add('selected');
-      document.getElementById('tm-reject').classList.remove('selected');
-    };
-    document.getElementById('tm-reject').onclick = ()=>{
-      outcome='rejected';
-      document.getElementById('tm-reject').classList.add('selected');
-      document.getElementById('tm-approve').classList.remove('selected');
-    };
-    document.getElementById('tm-close-btn').onclick = async ()=>{
-      if(!confirm('تأكيد إنهاء هذا الطلب؟')) return;
-      const solution = document.getElementById('tm-solution').value;
-      try{
-        await api(`/api/admin/tickets/${t.id}/close`, { method:'POST', body: JSON.stringify({ outcome, solution }) });
-        toast('تم إنهاء الطلب');
-        closeTicketModal();
-        renderTab();
-      }catch(e){ toast(e.message); }
-    };
-  } else {
-    footer.innerHTML = `<div class="closed-note">
-      الحالة: <b>${t.outcome==='approved'?'مقبول ✔':t.outcome==='rejected'?'مرفوض ✘':'مغلق'}</b>
-      ${t.solution ? `<div style="margin-top:6px;">الحل: ${escapeHtml(t.solution)}</div>` : ''}
-    </div>`;
-  }
-}
-
-async function refreshTicketModal(){
-  if(!openTicketId) return;
-  const t = await api('/api/admin/tickets/'+openTicketId);
-  renderTmFooter(t);
-  document.getElementById('tm-chat-form').style.display = t.status==='closed' ? 'none' : 'flex';
-}
-
-function appendBubble(m){
-  const wrap = document.getElementById('tm-chat-scroll');
-  if(!wrap) return;
+function appendBubble(m) {
+  const scroll = document.getElementById('tm-chat-scroll');
+  if (!scroll) return;
   const row = document.createElement('div');
-  const mine = m.sender_type === 'admin';
-  row.className = 'bubble-row ' + (m.sender_type==='system' ? 'system' : (mine ? 'mine' : 'theirs'));
+  let cls = 'system';
+  if (m.sender_type === 'admin') cls = 'mine';
+  else if (m.sender_type === 'customer') cls = 'theirs';
+  row.className = 'bubble-row ' + cls;
+
   let media = '';
-  if(m.attachment_url){
-    if(m.attachment_type==='image') media = `<img src="${m.attachment_url}">`;
-    else if(m.attachment_type==='video') media = `<video src="${m.attachment_url}" controls></video>`;
-    else if(m.attachment_type==='audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
+  if (m.attachment_url) {
+    if (m.attachment_type === 'image') media = `<img src="${m.attachment_url}" alt="صورة">`;
+    else if (m.attachment_type === 'video') media = `<video src="${m.attachment_url}" controls></video>`;
+    else if (m.attachment_type === 'audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
   }
-  row.innerHTML = `<div class="bubble">${m.content?escapeHtml(m.content):''}${media}</div>`;
-  wrap.appendChild(row);
-  wrap.scrollTop = wrap.scrollHeight;
+
+  const showSender = m.sender_type !== 'system' && (m.sender_type === 'admin' || m.sender_type === 'customer');
+  row.innerHTML = `<div class="bubble">
+    ${showSender ? `<div class="sender">${escapeHtml(m.sender_name)}</div>` : ''}
+    ${m.content ? escapeHtml(m.content).replace(/\n/g, '<br>') : ''}
+    ${media}
+    <div class="time">${formatTime(m.created_at)}</div>
+  </div>`;
+  scroll.appendChild(row);
 }
 
-function closeTicketModal(){
-  document.getElementById('ticket-modal-bg')?.remove();
-  openTicketId = null;
-  endCall();
+function scrollChat() {
+  const el = document.getElementById('tm-chat-scroll');
+  if (el) el.scrollTop = el.scrollHeight;
 }
 
-/* ============ Voice call ============ */
-async function ensurePC(){
-  if(pc) return;
-  localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
-  pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
-  localStream.getTracks().forEach(t=> pc.addTrack(t, localStream));
-  pc.onicecandidate = (e)=>{ if(e.candidate && peerSocketId) socket.emit('rtc:ice', { toSocketId: peerSocketId, candidate: e.candidate }); };
-  pc.ontrack = (e)=>{ document.getElementById('remote-audio').srcObject = e.streams[0]; };
-  callActive = true;
-  document.getElementById('tm-call-btn')?.classList.add('active');
+async function refreshTicketModal() {
+  // optional: could re-fetch status
 }
-function endCall(){
-  pc?.close(); pc=null;
-  localStream?.getTracks().forEach(t=>t.stop()); localStream=null;
-  document.getElementById('remote-audio').srcObject = null;
-  callActive = false; peerSocketId = null;
-  document.getElementById('tm-call-btn')?.classList.remove('active');
+
+// WebRTC helpers
+async function ensurePC() {
+  if (pc) return pc;
+  pc = new RTCPeerConnection({
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      {
+        urls: 'turn:openrelay.metered.ca:80',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443',
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      }
+    ]
+  });
+  localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  pc.ontrack = (e) => {
+    let audio = document.getElementById('remote-audio');
+    if (!audio) {
+      audio = document.createElement('audio');
+      audio.id = 'remote-audio';
+      audio.autoplay = true;
+      document.body.appendChild(audio);
+    }
+    audio.srcObject = e.streams[0];
+  };
+  pc.onicecandidate = (e) => {
+    if (e.candidate && peerSocketId) {
+      socket.emit('rtc:ice', { toSocketId: peerSocketId, candidate: e.candidate });
+    }
+  };
+  return pc;
 }
-function showIncomingCall(fromSocketId){
+
+function showIncomingCall(fromSocketId) {
   peerSocketId = fromSocketId;
-  if(confirm('اتصال صوتي وارد من العميل — قبول؟')){
-    ensurePC().then(()=> socket.emit('rtc:call-accept', { toSocketId: fromSocketId }));
-  } else {
+  const overlay = document.createElement('div');
+  overlay.id = 'call-overlay';
+  overlay.innerHTML = `
+    <div class="ring">📞</div>
+    <div style="font-size:18px;font-weight:700">مكالمة واردة</div>
+    <div class="btns">
+      <button class="accept">✓</button>
+      <button class="decline">✕</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.accept').onclick = async () => {
+    overlay.remove();
+    await ensurePC();
+    socket.emit('rtc:call-accept', { toSocketId: fromSocketId });
+    const callBtn = document.getElementById('btn-call');
+    if (callBtn) callBtn.classList.add('active');
+  };
+  overlay.querySelector('.decline').onclick = () => {
     socket.emit('rtc:call-decline', { toSocketId: fromSocketId });
-  }
+    overlay.remove();
+    peerSocketId = null;
+  };
+}
+
+function endCall() {
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  const audio = document.getElementById('remote-audio');
+  if (audio) audio.remove();
+  const callBtn = document.getElementById('btn-call');
+  if (callBtn) callBtn.classList.remove('active');
+  const overlay = document.getElementById('call-overlay');
+  if (overlay) overlay.remove();
+  if (openTicketId) socket.emit('rtc:call-end', { ticketId: openTicketId });
+  peerSocketId = null;
 }
 
 tryAutoLogin();

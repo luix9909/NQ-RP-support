@@ -31,8 +31,9 @@ const upload = multer({
   },
 });
 
-// ---------------- in-memory sessions ----------------
+// ---------------- in-memory sessions & auto mode ----------------
 const adminSessions = new Map(); // token -> adminId
+const autoModeTickets = new Set(); // ticketIds that have AI auto-reply enabled
 
 function getAdminById(id) { return stmts.getAdminById.get(id); }
 function publicAdmin(a) { return { id: a.id, email: a.email, name: a.name, role: a.role }; }
@@ -66,7 +67,7 @@ function queuePosition(ticketId) {
 }
 function avgHandlingSeconds() {
   const rows = stmts.avgHandling.all();
-  if (!rows.length) return 300; // default estimate: 5 minutes
+  if (!rows.length) return 300;
   const total = rows.reduce((sum, r) => {
     const secs = (new Date(r.closed_at + 'Z') - new Date(r.accepted_at + 'Z')) / 1000;
     return sum + Math.max(secs, 30);
@@ -82,12 +83,55 @@ function ticketStatusPayload(ticketId) {
     id: t.id, status: t.status, position, etaSeconds: eta,
     assignedAdminName: t.assigned_admin_name, outcome: t.outcome, solution: t.solution,
     subject: t.subject, customerName: t.customer_name,
+    autoMode: autoModeTickets.has(Number(ticketId)),
   };
 }
 function broadcastQueue() {
   const waiting = stmts.waitingIds.all();
   waiting.forEach(w => io.to('ticket:' + w.id).emit('ticket:status', ticketStatusPayload(w.id)));
   io.to('admins:queue').emit('queue:update');
+}
+
+// ---------------- Simple local AI for /auto ----------------
+function generateAutoReply(customerMessage, ticket) {
+  const msg = (customerMessage || '').toLowerCase().trim();
+  const name = ticket.customer_name || 'عميلنا';
+
+  // Greetings
+  if (/^(السلام|مرحبا|هلا|اهلا|أهلا|سلام|hi|hello)/.test(msg)) {
+    return `وعليكم السلام ورحمة الله ${name} 🌟\nكيف أقدر أخدمك اليوم؟`;
+  }
+  // Thanks
+  if (/شكر|مشكور|تسلم|يعطيك|thanks|thank you/.test(msg)) {
+    return `العفو يا ${name}، هذا واجبي 😊\nهل في أي شيء ثاني أقدر أساعدك فيه؟`;
+  }
+  // Waiting / slow
+  if (/طويل|انتظر|متى|متى يجي|متى ترد|بطيء|بطيئ/.test(msg)) {
+    return `أعتذر على الانتظار ${name} 🙏\nأنا معك الآن، تفضل اشرح لي المشكلة بالتفصيل.`;
+  }
+  // Problem / help
+  if (/مشكلة|خطأ|ما يشتغل|مايفتح|ما يفتح|عطل|خربان|مساعدة|ساعدني/.test(msg)) {
+    return `تمام، خليني أساعدك.\nممكن تشرح لي المشكلة بالتفصيل؟ وإذا في صورة أو رسالة خطأ ارسلها لي.`;
+  }
+  // Account / login
+  if (/حساب|دخول|تسجيل|باسوورد|كلمة مرور|ايميل|إيميل|login|password/.test(msg)) {
+    return `بخصوص الحساب، ممكن تعطيني الإيميل المسجل فيه أو رقم الجوال المرتبط عشان أقدر أساعدك بشكل أدق؟`;
+  }
+  // Payment / money
+  if (/فلوس|دفع|مبلغ|فاتورة|استرداد|ارجاع|refund|payment/.test(msg)) {
+    return `بخصوص المبالغ، راح أراجع الطلب.\nممكن ترسل لي رقم العملية أو تفاصيل أكثر؟`;
+  }
+  // Closing
+  if (/خلاص|تم|انتهى|شكرا انتهى|ما فيه شيء|لا شيء/.test(msg)) {
+    return `تمام، يسعدني أني قدرت أساعدك ${name} 🌟\nإذا احتجت أي شيء ثاني لا تتردد ترجع لنا. يومك سعيد!`;
+  }
+  // Default smart reply
+  const defaults = [
+    `تمام ${name}، فهمت عليك.\nخليني أشيك وأرد عليك خلال لحظات.`,
+    `شكراً لتواصلك ${name}.\nممكن تعطيني تفاصيل أكثر عشان أقدر أساعدك بشكل أفضل؟`,
+    `حاضر، أنا معك.\nاشرح لي أكثر لو سمحت.`,
+  ];
+  return defaults[Math.floor(Math.random() * defaults.length)];
 }
 
 // ---------------- PUBLIC: ticket creation & status ----------------
@@ -124,10 +168,10 @@ app.get('/api/tickets/:id/messages', verifyTicketToken, (req, res) => {
   res.json(stmts.listMessages.all(req.ticket.id));
 });
 
-// ---------------- uploads (customer needs ticket token, admin needs auth) ----------------
+// ---------------- uploads ----------------
 app.post('/api/upload', (req, res, next) => {
   const adminToken = (req.headers.authorization || '').replace('Bearer ', '');
-  if (adminSessions.has(adminToken)) return next(); // admin path
+  if (adminSessions.has(adminToken)) return next();
   const ticketId = req.query.ticketId;
   const t = ticketId && getTicket(ticketId);
   if (!t || req.query.token !== t.access_token) return res.status(403).json({ error: 'غير مصرح بالرفع' });
@@ -195,7 +239,7 @@ app.get('/api/admin/tickets', requireAdminAuth, (req, res) => {
 app.get('/api/admin/tickets/:id', requireAdminAuth, (req, res) => {
   const t = getTicket(req.params.id);
   if (!t) return res.status(404).json({ error: 'غير موجود' });
-  res.json(publicTicket(t));
+  res.json({ ...publicTicket(t), autoMode: autoModeTickets.has(Number(t.id)) });
 });
 app.get('/api/admin/tickets/:id/messages', requireAdminAuth, (req, res) => {
   res.json(stmts.listMessages.all(req.params.id));
@@ -219,6 +263,7 @@ app.post('/api/admin/tickets/:id/close', requireAdminAuth, (req, res) => {
   const { outcome, solution } = req.body;
   const out = ['approved', 'rejected'].includes(outcome) ? outcome : null;
   stmts.closeTicket.run(out, (solution || '').trim(), t.id);
+  autoModeTickets.delete(Number(t.id));
   io.to('ticket:' + t.id).emit('ticket:status', ticketStatusPayload(t.id));
   io.to('admins:queue').emit('queue:update');
   res.json(ticketStatusPayload(t.id));
@@ -275,23 +320,91 @@ io.on('connection', (socket) => {
     let senderType, senderName, finalContent = (content || '').trim();
 
     if (socket.admin) {
-      senderType = 'admin'; senderName = socket.admin.name;
-      if (/^\/?(wait|انتظار)$/i.test(finalContent)) {
+      senderType = 'admin';
+      senderName = socket.admin.name;
+
+      // ===== Slash commands =====
+      const cmd = finalContent.toLowerCase().trim();
+
+      if (cmd === '/auto' || cmd === '/ai') {
+        autoModeTickets.add(Number(ticketId));
+        const sys = stmts.insertSystemMessage.run(ticketId, '🤖 تم تفعيل المساعد الذكي — سيرد تلقائياً على رسائل الزبون');
+        const msg = stmts.getMessageById.get(sys.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', msg);
+        io.to('ticket:' + ticketId).emit('ticket:status', ticketStatusPayload(ticketId));
+        return;
+      }
+      if (cmd === '/auto off' || cmd === '/ai off' || cmd === '/stop') {
+        autoModeTickets.delete(Number(ticketId));
+        const sys = stmts.insertSystemMessage.run(ticketId, 'تم إيقاف المساعد الذكي');
+        const msg = stmts.getMessageById.get(sys.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', msg);
+        io.to('ticket:' + ticketId).emit('ticket:status', ticketStatusPayload(ticketId));
+        return;
+      }
+      if (cmd === '/wait' || cmd === '/انتظار') {
         finalContent = 'الرجاء الانتظار قليلاً، سأكون معك خلال لحظات 🙏';
       }
+      if (cmd === '/help' || cmd === '/أوامر') {
+        const helpText = `الأوامر المتاحة:
+/auto — تفعيل المساعد الذكي
+/auto off — إيقاف المساعد الذكي
+/wait — رسالة انتظار جاهزة
+/close approved — إغلاق الطلب بالموافقة
+/close rejected — إغلاق الطلب بالرفض
+/help — عرض هذه القائمة`;
+        const sys = stmts.insertSystemMessage.run(ticketId, helpText);
+        const msg = stmts.getMessageById.get(sys.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', msg);
+        return;
+      }
+      if (cmd.startsWith('/close approved') || cmd === '/close ok') {
+        const solution = finalContent.replace(/^\/close\s+(approved|ok)\s*/i, '').trim() || 'تم حل المشكلة';
+        stmts.closeTicket.run('approved', solution, ticketId);
+        autoModeTickets.delete(Number(ticketId));
+        const sys = stmts.insertSystemMessage.run(ticketId, '✅ تم إغلاق الطلب (موافقة)');
+        const msg = stmts.getMessageById.get(sys.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', msg);
+        io.to('ticket:' + ticketId).emit('ticket:status', ticketStatusPayload(ticketId));
+        io.to('admins:queue').emit('queue:update');
+        return;
+      }
+      if (cmd.startsWith('/close rejected') || cmd === '/close no') {
+        const solution = finalContent.replace(/^\/close\s+(rejected|no)\s*/i, '').trim() || 'لم يتم حل المشكلة';
+        stmts.closeTicket.run('rejected', solution, ticketId);
+        autoModeTickets.delete(Number(ticketId));
+        const sys = stmts.insertSystemMessage.run(ticketId, '❌ تم إغلاق الطلب (رفض)');
+        const msg = stmts.getMessageById.get(sys.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', msg);
+        io.to('ticket:' + ticketId).emit('ticket:status', ticketStatusPayload(ticketId));
+        io.to('admins:queue').emit('queue:update');
+        return;
+      }
     } else if (socket.ticketId === String(ticketId)) {
-      senderType = 'customer'; senderName = t.customer_name;
+      senderType = 'customer';
+      senderName = t.customer_name;
     } else {
       return;
     }
+
     if (!finalContent && !attachmentUrl) return;
 
     const info = stmts.insertMessage.run(ticketId, senderType, senderName, finalContent, attachmentUrl || null, attachmentType || null);
     const msg = stmts.getMessageById.get(info.lastInsertRowid);
     io.to('ticket:' + ticketId).emit('ticket:message', msg);
+
+    // Auto-reply if enabled and message is from customer
+    if (senderType === 'customer' && autoModeTickets.has(Number(ticketId)) && finalContent) {
+      setTimeout(() => {
+        const reply = generateAutoReply(finalContent, t);
+        const autoInfo = stmts.insertMessage.run(ticketId, 'admin', 'المساعد الذكي 🤖', reply, null, null);
+        const autoMsg = stmts.getMessageById.get(autoInfo.lastInsertRowid);
+        io.to('ticket:' + ticketId).emit('ticket:message', autoMsg);
+      }, 800 + Math.random() * 700);
+    }
   });
 
-  // ---- WebRTC signaling relay (1:1 customer <-> admin voice call) ----
+  // ---- WebRTC signaling ----
   socket.on('rtc:offer', ({ toSocketId, sdp }) => io.to(toSocketId).emit('rtc:offer', { fromSocketId: socket.id, sdp }));
   socket.on('rtc:answer', ({ toSocketId, sdp }) => io.to(toSocketId).emit('rtc:answer', { fromSocketId: socket.id, sdp }));
   socket.on('rtc:ice', ({ toSocketId, candidate }) => io.to(toSocketId).emit('rtc:ice', { fromSocketId: socket.id, candidate }));
@@ -304,10 +417,9 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log('Support desk server running on port', PORT);
-  console.log('Owner login: slomsalman2@gmail.com (password as set)');
+  console.log('Owner login: slomsalman2@gmail.com');
 });
 
-// Graceful shutdown
 function shutdown() {
   console.log('Shutting down...');
   server.close(() => {

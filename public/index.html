@@ -4,348 +4,709 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الدعم الفني</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg-0:#08111a; --bg-1:#0d1a26; --bg-2:#132433; --line:#1f3547;
-  --teal:#14b8a6; --teal-2:#5eead4; --teal-dim:#0b6b60;
-  --text-0:#eaf3f5; --text-1:#9db3bd; --text-2:#5c7784;
-  --red:#ef4444; --green:#22c55e; --amber:#eab308;
-  --font:'Cairo',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+:root {
+  --bg-0: #060d14;
+  --bg-1: #0b1520;
+  --bg-2: #12202e;
+  --bg-3: #1a2d3f;
+  --line: #1e3348;
+  --teal: #14b8a6;
+  --teal-2: #5eead4;
+  --teal-dim: #0d6b62;
+  --teal-glow: rgba(20,184,166,.15);
+  --text-0: #f0f7fa;
+  --text-1: #a8c0cc;
+  --text-2: #6b8a99;
+  --red: #ef4444;
+  --green: #22c55e;
+  --amber: #eab308;
+  --font: 'Cairo', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --radius: 16px;
+  --shadow: 0 12px 40px rgba(0,0,0,.4);
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
-body{font-family:var(--font);background:var(--bg-0);color:var(--text-0);}
-.hidden{display:none !important;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
-input,textarea{font-family:inherit;}
-::selection{background:var(--teal);color:#000;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg-0);
+  color: var(--text-0);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 20%, rgba(20,184,166,.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 80%, rgba(167,139,250,.05) 0%, transparent 45%);
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea { font-family: inherit; }
 
-.shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
-.card{width:480px;max-width:100%;background:var(--bg-1);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);}
-.brand{display:flex;align-items:center;gap:10px;padding:20px 24px;border-bottom:1px solid var(--line);}
-.brand .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(160deg,var(--teal-2),var(--teal-dim));display:flex;align-items:center;justify-content:center;font-size:17px;}
-.brand b{font-size:15px;}
-.brand span{display:block;font-family:var(--mono);font-size:10px;color:var(--text-2);letter-spacing:1px;}
-.pad{padding:24px;}
+.container {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-/* Intake form */
-.field{margin-bottom:16px;}
-.field label{display:block;font-size:12.5px;color:var(--text-1);margin-bottom:7px;}
-.field input, .field textarea{width:100%;background:var(--bg-0);border:1px solid var(--line);border-radius:9px;padding:12px 14px;color:var(--text-0);font-size:14px;outline:none;}
-.field textarea{min-height:90px;resize:vertical;}
-.field input:focus, .field textarea:focus{border-color:var(--teal-dim);}
-.primary-btn{width:100%;background:linear-gradient(180deg,var(--teal-2),var(--teal));color:#022; font-weight:700;padding:14px;border-radius:10px;font-size:14.5px;}
-.primary-btn:hover{filter:brightness(1.06);}
-.err{color:var(--red);font-size:12.5px;margin-top:10px;min-height:14px;}
+.header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.header .logo {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba(20,184,166,.25);
+}
+.header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+.header p { font-size: 14px; color: var(--text-2); }
 
-/* Queue view */
-.queue-view{padding:36px 24px;text-align:center;}
-.queue-num{font-family:var(--mono);font-size:56px;font-weight:700;color:var(--teal-2);line-height:1;}
-.queue-label{font-size:13px;color:var(--text-1);margin:10px 0 26px;}
-.eta-box{background:var(--bg-0);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:20px;}
-.eta-box .t{font-family:var(--mono);font-size:20px;color:var(--text-0);}
-.eta-box .l{font-size:11.5px;color:var(--text-2);margin-top:4px;}
-.hold-music-row{display:flex;align-items:center;justify-content:center;gap:10px;font-size:12.5px;color:var(--text-2);}
-.hold-music-row button{border:1px solid var(--line);border-radius:8px;padding:6px 12px;}
-.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 1.3s infinite;display:inline-block;margin-inline-end:6px;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+}
 
-/* Chat view */
-#chat-view{display:flex;flex-direction:column;height:640px;max-height:85vh;}
-.chat-head{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
-.chat-head .agent{font-size:13px;}
-.chat-head .agent b{color:var(--teal-2);}
-.call-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;}
-.call-btn.active{background:var(--red);border-color:var(--red);}
-#chat-scroll{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
-.bubble-row{display:flex;}
-.bubble-row.mine{justify-content:flex-start;}
-.bubble-row.theirs{justify-content:flex-end;}
-.bubble-row.system{justify-content:center;}
-.bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13.5px;line-height:1.6;}
-.bubble-row.mine .bubble{background:var(--teal-dim);color:#eafffb;border-radius:12px 12px 12px 2px;}
-.bubble-row.theirs .bubble{background:var(--bg-2);border:1px solid var(--line);border-radius:12px 12px 2px 12px;}
-.bubble-row.system .bubble{background:none;color:var(--text-2);font-size:11.5px;font-family:var(--mono);}
-.bubble img,.bubble video{max-width:100%;border-radius:8px;display:block;margin-top:6px;}
-.bubble audio{margin-top:6px;width:220px;}
-.typing-preview{padding:6px 20px;font-size:11.5px;color:var(--text-2);font-family:var(--mono);min-height:20px;}
-#chat-form{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);align-items:center;}
-#chat-input{flex:1;background:var(--bg-0);border:1px solid var(--line);border-radius:9px;padding:11px 14px;color:var(--text-0);font-size:13.5px;outline:none;}
-#chat-input:focus{border-color:var(--teal-dim);}
-.icon-btn{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-1);}
-.icon-btn:hover{color:var(--teal-2);border-color:var(--teal-dim);}
-#send-btn{background:var(--teal);color:#022;font-weight:700;padding:0 16px;border-radius:9px;height:38px;}
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-1);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.field input, .field textarea {
+  width: 100%;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text-0);
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+.field input:focus, .field textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-glow);
+}
 
-/* Closed banner */
-.closed-banner{margin:14px 20px;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--bg-0);text-align:center;font-size:13px;}
-.closed-banner.approved{border-color:var(--green);color:var(--green);}
-.closed-banner.rejected{border-color:var(--red);color:var(--red);}
-.closed-banner .sol{color:var(--text-1);margin-top:6px;font-size:12.5px;}
+.primary-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--teal-2), var(--teal));
+  color: #022c26;
+  font-weight: 700;
+  padding: 16px;
+  border-radius: 13px;
+  font-size: 15.5px;
+  transition: transform .15s, box-shadow .15s;
+  margin-top: 6px;
+}
+.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(20,184,166,.3); }
+.primary-btn:disabled { opacity: .6; transform: none; cursor: not-allowed; }
 
-.incoming-call{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-1);border:1px solid var(--teal);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:50;}
-.incoming-call button{padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;}
-.incoming-call .accept{background:var(--green);color:#001;}
-.incoming-call .decline{background:var(--red);color:#fff;}
+.err { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; min-height: 18px; }
+
+/* Waiting / Status screen */
+.status-card {
+  text-align: center;
+  padding: 20px 10px;
+}
+.status-icon {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--bg-2);
+  border: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.status-card h2 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+.status-card .desc { font-size: 14px; color: var(--text-1); margin-bottom: 24px; line-height: 1.7; }
+.queue-info {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 20px;
+}
+.queue-info .item {
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 22px;
+  min-width: 110px;
+}
+.queue-info .item .val {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--teal-2);
+}
+.queue-info .item .lbl { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+
+/* Chat screen */
+#chat-screen { display: none; flex-direction: column; height: 100vh; max-width: 640px; margin: 0 auto; }
+#chat-screen.active { display: flex; }
+
+.chat-header {
+  padding: 16px 20px;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chat-header .info .name { font-weight: 700; font-size: 15px; }
+.chat-header .info .status { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.chat-header .actions { display: flex; gap: 8px; }
+.call-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  background: var(--bg-2);
+  transition: all .15s;
+}
+.call-btn:hover { background: var(--green); border-color: var(--green); }
+.call-btn.active { background: var(--red); border-color: var(--red); animation: pulse 1.2s infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.4); }
+  50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+}
+
+#chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(180deg, var(--bg-0), var(--bg-1));
+}
+.bubble-row { display: flex; animation: fadeUp .2s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bubble-row.mine { justify-content: flex-end; }
+.bubble-row.theirs { justify-content: flex-start; }
+.bubble-row.system { justify-content: center; }
+.bubble {
+  max-width: 78%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.bubble-row.mine .bubble {
+  background: linear-gradient(135deg, var(--teal-dim), #0a5c54);
+  color: #e6fffb;
+  border-radius: 16px 16px 4px 16px;
+}
+.bubble-row.theirs .bubble {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 16px 16px 16px 4px;
+}
+.bubble-row.system .bubble {
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-family: var(--mono);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 6px 14px;
+  max-width: 90%;
+  text-align: center;
+}
+.bubble .time {
+  font-size: 10.5px;
+  opacity: .5;
+  margin-top: 6px;
+  font-family: var(--mono);
+  text-align: end;
+}
+.bubble img, .bubble video { max-width: 100%; border-radius: 10px; margin-top: 8px; max-height: 240px; }
+.bubble audio { margin-top: 8px; width: 220px; }
+
+#chat-typing {
+  padding: 4px 20px;
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--mono);
+  min-height: 20px;
+}
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px 20px;
+  background: var(--bg-1);
+  border-top: 1px solid var(--line);
+  align-items: flex-end;
+}
+.chat-form textarea {
+  flex: 1;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 16px;
+  color: var(--text-0);
+  font-size: 14.5px;
+  outline: none;
+  resize: none;
+  min-height: 48px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+.chat-form textarea:focus { border-color: var(--teal); }
+.icon-btn {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  color: var(--text-1);
+  background: var(--bg-2);
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.icon-btn:hover { background: var(--bg-3); color: var(--text-0); }
+.icon-btn.send {
+  background: linear-gradient(135deg, var(--teal-2), var(--teal));
+  border: none;
+  color: #022c26;
+}
+
+/* Closed state */
+.closed-banner {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  margin: 16px 20px;
+}
+.closed-banner h3 { font-size: 16px; margin-bottom: 8px; }
+.closed-banner p { font-size: 13.5px; color: var(--text-1); line-height: 1.6; }
+
+/* Hold music note */
+.hold-note {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 16px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
 
-<div class="shell">
+<!-- Form Screen -->
+<div class="container" id="form-screen">
+  <div class="header">
+    <div class="logo">🎧</div>
+    <h1>الدعم الفني</h1>
+    <p>نحن هنا لمساعدتك. اكتب طلبك وسنتواصل معك بأسرع وقت.</p>
+  </div>
   <div class="card">
-    <div class="brand">
-      <div class="mark">🎧</div>
-      <div><b>الدعم الفني</b><span>SUPPORT DESK</span></div>
+    <div class="field">
+      <label>اسمك</label>
+      <input id="f-name" placeholder="الاسم الكامل" autocomplete="name">
     </div>
-
-    <!-- Intake form -->
-    <div id="intake-view" class="pad">
-      <div class="field"><label>الاسم</label><input id="in-name" placeholder="اسمك الكامل"></div>
-      <div class="field"><label>رقم التواصل (اختياري)</label><input id="in-contact" placeholder="رقم جوال أو إيميل"></div>
-      <div class="field"><label>تفاصيل طلبك</label><textarea id="in-subject" placeholder="اشرح مشكلتك أو طلبك بالتفصيل..."></textarea></div>
-      <button class="primary-btn" id="intake-submit">إرسال الطلب</button>
-      <div class="err" id="intake-err"></div>
+    <div class="field">
+      <label>رقم التواصل (اختياري)</label>
+      <input id="f-contact" placeholder="جوال أو إيميل">
     </div>
-
-    <!-- Queue waiting view -->
-    <div id="queue-view" class="queue-view hidden">
-      <div class="queue-num" id="queue-pos">—</div>
-      <div class="queue-label"><span class="pulse-dot"></span>دورك بالطابور</div>
-      <div class="eta-box">
-        <div class="t" id="eta-text">—</div>
-        <div class="l">الوقت المتوقع للانتظار (تقديري)</div>
-      </div>
-      <div class="hold-music-row">
-        <span>🎵 موسيقى الانتظار</span>
-        <button id="hold-toggle">إيقاف</button>
-      </div>
-      <audio id="hold-audio" loop></audio>
+    <div class="field">
+      <label>وصف المشكلة أو الطلب</label>
+      <textarea id="f-subject" placeholder="اكتب تفاصيل طلبك بوضوح..."></textarea>
     </div>
-
-    <!-- Active/closed chat view -->
-    <div id="chat-view" class="hidden">
-      <div class="chat-head">
-        <div class="agent">متصل مع: <b id="agent-name">—</b></div>
-        <button class="call-btn" id="call-btn" title="اتصال صوتي">🎙️</button>
-      </div>
-      <div id="chat-scroll"></div>
-      <div class="typing-preview" id="typing-preview"></div>
-      <div id="closed-area"></div>
-      <form id="chat-form">
-        <button type="button" class="icon-btn" id="attach-btn" title="إرفاق ملف">📎</button>
-        <input type="file" id="file-input" class="hidden" accept="image/*,video/*,audio/*">
-        <input id="chat-input" placeholder="اكتب رسالتك...">
-        <button type="submit" id="send-btn">إرسال</button>
-      </form>
-    </div>
+    <button class="primary-btn" id="f-submit">إرسال الطلب</button>
+    <div class="err" id="f-err"></div>
   </div>
 </div>
 
+<!-- Waiting / Status Screen -->
+<div class="container" id="status-screen" style="display:none">
+  <div class="header">
+    <div class="logo">🎧</div>
+    <h1>الدعم الفني</h1>
+  </div>
+  <div class="card status-card">
+    <div class="status-icon" id="status-icon">⏳</div>
+    <h2 id="status-title">طلبك قيد الانتظار</h2>
+    <p class="desc" id="status-desc">سيتم التواصل معك قريباً. يمكنك البقاء في هذه الصفحة.</p>
+    <div class="queue-info" id="queue-info">
+      <div class="item">
+        <div class="val" id="q-pos">—</div>
+        <div class="lbl">دورك</div>
+      </div>
+      <div class="item">
+        <div class="val" id="q-eta">—</div>
+        <div class="lbl">الوقت المتوقع</div>
+      </div>
+    </div>
+    <p class="hold-note" id="hold-note">يرجى عدم إغلاق الصفحة</p>
+  </div>
+</div>
+
+<!-- Chat Screen -->
+<div id="chat-screen">
+  <div class="chat-header">
+    <div class="info">
+      <div class="name" id="chat-admin-name">موظف الدعم</div>
+      <div class="status" id="chat-status">متصل</div>
+    </div>
+    <div class="actions">
+      <button class="call-btn" id="btn-call" title="اتصال صوتي">📞</button>
+    </div>
+  </div>
+  <div id="chat-scroll"></div>
+  <div id="chat-typing"></div>
+  <div id="closed-area"></div>
+  <form class="chat-form" id="chat-form">
+    <button type="button" class="icon-btn" id="btn-attach">📎</button>
+    <textarea id="chat-input" placeholder="اكتب رسالتك..." rows="1"></textarea>
+    <button type="submit" class="icon-btn send">➤</button>
+  </form>
+</div>
+
+<audio id="hold-music" loop preload="auto" src="/audio/hold-music.mp3"></audio>
 <audio id="remote-audio" autoplay></audio>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-let ticketId = localStorage.getItem('support_ticket_id');
-let accessToken = localStorage.getItem('support_ticket_token');
+let ticketId = null;
+let accessToken = null;
 let socket = null;
-let pollTimer = null;
-let typingTimer = null;
 let pc = null;
-let localStream = null;
-let callActive = false;
 let peerSocketId = null;
+let localStream = null;
+let currentStatus = 'waiting';
 
-const ICE_SERVERS = [
-  { urls:'stun:stun.l.google.com:19302' },
-  { urls:'stun:stun.relay.metered.ca:80' },
-  { urls:'turn:global.relay.metered.ca:80', username:'openrelayproject', credential:'openrelayproject' }
-];
-
-function show(id){
-  ['intake-view','queue-view','chat-view'].forEach(v=> document.getElementById(v).classList.toggle('hidden', v!==id));
-}
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmtEta(sec){
-  if(sec<=0) return 'الآن';
-  const m = Math.ceil(sec/60);
-  return m<=1 ? 'أقل من دقيقة' : ('حوالي '+m+' دقيقة');
+const saved = localStorage.getItem('support_ticket');
+if (saved) {
+  try {
+    const d = JSON.parse(saved);
+    ticketId = d.id;
+    accessToken = d.token;
+  } catch {}
 }
 
-document.getElementById('intake-submit').onclick = async ()=>{
-  const customerName = document.getElementById('in-name').value.trim();
-  const customerContact = document.getElementById('in-contact').value.trim();
-  const subject = document.getElementById('in-subject').value.trim();
-  const err = document.getElementById('intake-err'); err.textContent='';
-  if(!customerName){ err.textContent='الاسم مطلوب'; return; }
-  if(!subject){ err.textContent='اكتب تفاصيل طلبك'; return; }
-  const res = await fetch('/api/tickets', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({customerName, customerContact, subject}) });
-  const data = await res.json();
-  if(!res.ok){ err.textContent = data.error; return; }
-  ticketId = data.id; accessToken = data.accessToken;
-  localStorage.setItem('support_ticket_id', ticketId);
-  localStorage.setItem('support_ticket_token', accessToken);
-  boot();
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatTime(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso + (iso.includes('Z') ? '' : 'Z'));
+    return d.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+  } catch { return ''; }
+}
+function formatEta(secs) {
+  if (!secs || secs < 60) return 'أقل من دقيقة';
+  const m = Math.round(secs / 60);
+  if (m < 60) return m + ' دقيقة';
+  return Math.round(m / 60) + ' ساعة';
+}
+
+// Form submit
+document.getElementById('f-submit').onclick = async () => {
+  const name = document.getElementById('f-name').value.trim();
+  const contact = document.getElementById('f-contact').value.trim();
+  const subject = document.getElementById('f-subject').value.trim();
+  const err = document.getElementById('f-err');
+  err.textContent = '';
+  if (!name) { err.textContent = 'الاسم مطلوب'; return; }
+  if (!subject) { err.textContent = 'اكتب تفاصيل طلبك'; return; }
+
+  const btn = document.getElementById('f-submit');
+  btn.disabled = true;
+  btn.textContent = 'جاري الإرسال...';
+
+  try {
+    const res = await fetch('/api/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerName: name, customerContact: contact, subject })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'خطأ');
+    ticketId = data.id;
+    accessToken = data.accessToken;
+    localStorage.setItem('support_ticket', JSON.stringify({ id: ticketId, token: accessToken }));
+    showStatus(data);
+    connectSocket();
+  } catch (e) {
+    err.textContent = e.message || 'تعذر الإرسال';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'إرسال الطلب';
+  }
 };
 
-async function boot(){
-  if(!ticketId || !accessToken) return;
-  const res = await fetch(`/api/tickets/${ticketId}/status?token=${accessToken}`);
-  if(!res.ok){ localStorage.removeItem('support_ticket_id'); localStorage.removeItem('support_ticket_token'); show('intake-view'); return; }
-  const status = await res.json();
-  applyStatus(status);
-  connectSocket();
-  if(pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(async ()=>{
-    const r = await fetch(`/api/tickets/${ticketId}/status?token=${accessToken}`);
-    if(r.ok) applyStatus(await r.json());
-  }, 12000);
+function showStatus(data) {
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('status-screen').style.display = 'block';
+  document.getElementById('chat-screen').classList.remove('active');
+
+  currentStatus = data.status;
+  updateStatusUI(data);
+
+  // Try play hold music
+  const music = document.getElementById('hold-music');
+  music.volume = 0.3;
+  music.play().catch(() => {});
 }
 
-function applyStatus(status){
-  document.getElementById('agent-name').textContent = status.assignedAdminName || '—';
-  if(status.status === 'waiting'){
-    show('queue-view');
-    document.getElementById('queue-pos').textContent = status.position;
-    document.getElementById('eta-text').textContent = fmtEta(status.etaSeconds);
-    playHold();
-  } else {
-    stopHold();
-    show('chat-view');
-    if(status.status === 'closed'){
-      const area = document.getElementById('closed-area');
-      const cls = status.outcome === 'approved' ? 'approved' : status.outcome === 'rejected' ? 'rejected' : '';
-      const label = status.outcome === 'approved' ? '✔ تم قبول طلبك' : status.outcome === 'rejected' ? '✘ تم رفض طلبك' : 'تم إغلاق الطلب';
-      area.innerHTML = `<div class="closed-banner ${cls}">${label}${status.solution ? `<div class="sol">${escapeHtml(status.solution)}</div>` : ''}</div>`;
-      document.getElementById('chat-form').classList.add('hidden');
-      document.getElementById('call-btn').classList.add('hidden');
-    }
+function updateStatusUI(data) {
+  const icon = document.getElementById('status-icon');
+  const title = document.getElementById('status-title');
+  const desc = document.getElementById('status-desc');
+  const qInfo = document.getElementById('queue-info');
+
+  if (data.status === 'waiting') {
+    icon.textContent = '⏳';
+    title.textContent = 'طلبك قيد الانتظار';
+    desc.textContent = 'سيتم التواصل معك قريباً. يمكنك البقاء في هذه الصفحة.';
+    qInfo.style.display = 'flex';
+    document.getElementById('q-pos').textContent = data.position || '—';
+    document.getElementById('q-eta').textContent = formatEta(data.etaSeconds);
+    document.getElementById('hold-note').textContent = 'يرجى عدم إغلاق الصفحة';
+  } else if (data.status === 'active') {
+    document.getElementById('hold-music').pause();
+    showChat(data);
+  } else if (data.status === 'closed') {
+    document.getElementById('hold-music').pause();
+    icon.textContent = data.outcome === 'approved' ? '✅' : '📋';
+    title.textContent = data.outcome === 'approved' ? 'تم حل طلبك' : 'تم إغلاق الطلب';
+    desc.textContent = data.solution || 'شكراً لتواصلك معنا.';
+    qInfo.style.display = 'none';
+    document.getElementById('hold-note').textContent = '';
   }
 }
 
-function playHold(){
-  const a = document.getElementById('hold-audio');
-  if(!a.src){ a.src = '/audio/hold-music.mp3'; }
-  a.play().catch(()=>{});
+function showChat(data) {
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('status-screen').style.display = 'none';
+  document.getElementById('chat-screen').classList.add('active');
+  document.getElementById('chat-admin-name').textContent = data.assignedAdminName || 'موظف الدعم';
+  document.getElementById('chat-status').textContent = 'متصل الآن';
+  if (data.status === 'closed') {
+    document.getElementById('chat-form').style.display = 'none';
+    document.getElementById('closed-area').innerHTML = `
+      <div class="closed-banner">
+        <h3>${data.outcome === 'approved' ? '✅ تم حل الطلب' : 'تم إغلاق الطلب'}</h3>
+        <p>${escapeHtml(data.solution || '')}</p>
+      </div>`;
+  }
 }
-function stopHold(){
-  document.getElementById('hold-audio').pause();
-}
-document.getElementById('hold-toggle').onclick = ()=>{
-  const a = document.getElementById('hold-audio');
-  const btn = document.getElementById('hold-toggle');
-  if(a.paused){ a.play().catch(()=>{}); btn.textContent='إيقاف'; }
-  else { a.pause(); btn.textContent='تشغيل'; }
-};
 
-function connectSocket(){
-  socket = io({ auth:{} });
-  socket.on('connect', ()=> socket.emit('ticket:join', { ticketId, accessToken }));
-  socket.on('ticket:history', (msgs)=>{
-    document.getElementById('chat-scroll').innerHTML='';
-    msgs.forEach(appendMessage);
+function connectSocket() {
+  if (socket) return;
+  socket = io();
+  socket.on('connect', () => {
+    if (ticketId && accessToken) {
+      socket.emit('ticket:join', { ticketId, accessToken });
+    }
   });
-  socket.on('ticket:message', appendMessage);
-  socket.on('ticket:status', applyStatus);
+  socket.on('ticket:history', (msgs) => {
+    const scroll = document.getElementById('chat-scroll');
+    scroll.innerHTML = '';
+    msgs.forEach(appendBubble);
+    scroll.scrollTop = scroll.scrollHeight;
+  });
+  socket.on('ticket:message', (m) => {
+    appendBubble(m);
+    const scroll = document.getElementById('chat-scroll');
+    scroll.scrollTop = scroll.scrollHeight;
+  });
+  socket.on('ticket:typing', ({ text }) => {
+    document.getElementById('chat-typing').textContent = text ? '🖊️ الموظف يكتب...' : '';
+  });
+  socket.on('ticket:status', (data) => {
+    currentStatus = data.status;
+    if (data.status === 'active' && document.getElementById('chat-screen').classList.contains('active') === false) {
+      showChat(data);
+      socket.emit('ticket:join', { ticketId, accessToken });
+    } else if (data.status === 'closed') {
+      updateStatusUI(data);
+      if (document.getElementById('chat-screen').classList.contains('active')) {
+        document.getElementById('chat-form').style.display = 'none';
+        document.getElementById('closed-area').innerHTML = `
+          <div class="closed-banner">
+            <h3>${data.outcome === 'approved' ? '✅ تم حل الطلب' : 'تم إغلاق الطلب'}</h3>
+            <p>${escapeHtml(data.solution || '')}</p>
+          </div>`;
+      }
+    } else {
+      updateStatusUI(data);
+    }
+  });
 
-  socket.on('rtc:call-request', ({fromSocketId})=> showIncomingCall(fromSocketId));
-  socket.on('rtc:offer', async ({fromSocketId, sdp})=>{
+  // WebRTC
+  socket.on('rtc:call-request', ({ fromSocketId }) => {
+    peerSocketId = fromSocketId;
+    // Auto show incoming on customer side could be added; for now admin initiates mostly
+  });
+  socket.on('rtc:offer', async ({ fromSocketId, sdp }) => {
     peerSocketId = fromSocketId;
     await ensurePC();
     await pc.setRemoteDescription(sdp);
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
     socket.emit('rtc:answer', { toSocketId: fromSocketId, sdp: answer });
+    document.getElementById('btn-call').classList.add('active');
   });
-  socket.on('rtc:answer', async ({sdp})=>{ await pc?.setRemoteDescription(sdp); });
-  socket.on('rtc:ice', async ({candidate})=>{ try{ await pc?.addIceCandidate(candidate); }catch(e){} });
+  socket.on('rtc:answer', async ({ sdp }) => { await pc?.setRemoteDescription(sdp); });
+  socket.on('rtc:ice', async ({ candidate }) => { try { await pc?.addIceCandidate(candidate); } catch {} });
   socket.on('rtc:call-end', endCall);
-  socket.on('rtc:call-decline', ()=>{ endCall(); alert('تم رفض الاتصال'); });
 }
 
-function appendMessage(m){
-  const wrap = document.getElementById('chat-scroll');
+function appendBubble(m) {
+  const scroll = document.getElementById('chat-scroll');
+  if (!scroll) return;
   const row = document.createElement('div');
-  const mine = m.sender_type === 'customer';
-  row.className = 'bubble-row ' + (m.sender_type==='system' ? 'system' : (mine ? 'mine' : 'theirs'));
+  let cls = 'system';
+  if (m.sender_type === 'customer') cls = 'mine';
+  else if (m.sender_type === 'admin') cls = 'theirs';
+  row.className = 'bubble-row ' + cls;
+
   let media = '';
-  if(m.attachment_url){
-    if(m.attachment_type==='image') media = `<img src="${m.attachment_url}">`;
-    else if(m.attachment_type==='video') media = `<video src="${m.attachment_url}" controls></video>`;
-    else if(m.attachment_type==='audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
+  if (m.attachment_url) {
+    if (m.attachment_type === 'image') media = `<img src="${m.attachment_url}" alt="">`;
+    else if (m.attachment_type === 'video') media = `<video src="${m.attachment_url}" controls></video>`;
+    else if (m.attachment_type === 'audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
   }
-  row.innerHTML = `<div class="bubble">${m.content?escapeHtml(m.content):''}${media}</div>`;
-  wrap.appendChild(row);
-  wrap.scrollTop = wrap.scrollHeight;
+
+  row.innerHTML = `<div class="bubble">
+    ${m.content ? escapeHtml(m.content).replace(/\n/g, '<br>') : ''}
+    ${media}
+    <div class="time">${formatTime(m.created_at)}</div>
+  </div>`;
+  scroll.appendChild(row);
 }
 
-/* typing preview (send only, customer doesn't see their own) */
-document.getElementById('chat-input').addEventListener('input', (e)=>{
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(()=> socket?.emit('ticket:typing', { ticketId, text: e.target.value }), 250);
-});
-
-document.getElementById('chat-form').onsubmit = (e)=>{
+// Chat form
+document.getElementById('chat-form').onsubmit = (e) => {
   e.preventDefault();
   const input = document.getElementById('chat-input');
-  if(!input.value.trim()) return;
-  socket.emit('ticket:message', { ticketId, content: input.value });
-  input.value='';
-  socket.emit('ticket:typing', { ticketId, text:'' });
+  const content = input.value.trim();
+  if (!content || !ticketId) return;
+  socket.emit('ticket:message', { ticketId, content });
+  input.value = '';
+  input.style.height = 'auto';
+};
+document.getElementById('chat-input').oninput = function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  if (socket && ticketId) socket.emit('ticket:typing', { ticketId, text: this.value.slice(0, 60) });
+};
+document.getElementById('chat-input').onkeydown = (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('chat-form').requestSubmit();
+  }
 };
 
-document.getElementById('attach-btn').onclick = ()=> document.getElementById('file-input').click();
-document.getElementById('file-input').onchange = async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const fd = new FormData(); fd.append('file', file);
-  const res = await fetch(`/api/upload?ticketId=${ticketId}&token=${accessToken}`, { method:'POST', body: fd });
-  const data = await res.json();
-  if(!res.ok){ alert(data.error||'تعذر رفع الملف'); return; }
-  socket.emit('ticket:message', { ticketId, content:'', attachmentUrl: data.url, attachmentType: data.type });
-  e.target.value='';
+// Attach
+document.getElementById('btn-attach').onclick = () => {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'image/*,video/*,audio/*';
+  inp.onchange = async () => {
+    if (!inp.files[0] || !ticketId) return;
+    const fd = new FormData();
+    fd.append('file', inp.files[0]);
+    try {
+      const res = await fetch(`/api/upload?ticketId=${ticketId}&token=${accessToken}`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      socket.emit('ticket:message', { ticketId, content: '', attachmentUrl: data.url, attachmentType: data.type });
+    } catch (e) { alert(e.message); }
+  };
+  inp.click();
 };
 
-/* ============ Voice call (1:1 WebRTC) ============ */
-async function ensurePC(){
-  if(pc) return;
-  localStream = await navigator.mediaDevices.getUserMedia({ audio:true });
-  pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
-  localStream.getTracks().forEach(t=> pc.addTrack(t, localStream));
-  pc.onicecandidate = (e)=>{ if(e.candidate && peerSocketId) socket.emit('rtc:ice', { toSocketId: peerSocketId, candidate: e.candidate }); };
-  pc.ontrack = (e)=>{ document.getElementById('remote-audio').srcObject = e.streams[0]; };
-  callActive = true;
-  document.getElementById('call-btn').classList.add('active');
-}
-function endCall(){
-  pc?.close(); pc=null;
-  localStream?.getTracks().forEach(t=>t.stop()); localStream=null;
-  document.getElementById('remote-audio').srcObject = null;
-  callActive = false; peerSocketId = null;
-  document.getElementById('call-btn').classList.remove('active');
-}
-document.getElementById('call-btn').onclick = ()=>{
-  if(callActive){ socket.emit('rtc:call-end', { ticketId }); endCall(); return; }
+// Call button (customer can also initiate)
+document.getElementById('btn-call').onclick = async () => {
+  if (pc) { endCall(); return; }
+  document.getElementById('btn-call').classList.add('active');
+  await ensurePC();
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
   socket.emit('rtc:call-request', { ticketId });
-  alert('جاري إرسال طلب الاتصال، بانتظار قبول الموظف...');
+  // The other side will receive and answer
 };
-function showIncomingCall(fromSocketId){
-  peerSocketId = fromSocketId;
-  const el = document.createElement('div');
-  el.className='incoming-call';
-  el.innerHTML = `<span>📞 اتصال صوتي وارد</span><button class="accept">قبول</button><button class="decline">رفض</button>`;
-  document.body.appendChild(el);
-  el.querySelector('.accept').onclick = async ()=>{
-    el.remove();
-    await ensurePC();
-    socket.emit('rtc:call-accept', { toSocketId: fromSocketId });
+
+async function ensurePC() {
+  if (pc) return pc;
+  pc = new RTCPeerConnection({
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' }
+    ]
+  });
+  localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  pc.ontrack = (e) => {
+    document.getElementById('remote-audio').srcObject = e.streams[0];
   };
-  el.querySelector('.decline').onclick = ()=>{
-    el.remove();
-    socket.emit('rtc:call-decline', { toSocketId: fromSocketId });
+  pc.onicecandidate = (e) => {
+    if (e.candidate && peerSocketId) {
+      socket.emit('rtc:ice', { toSocketId: peerSocketId, candidate: e.candidate });
+    }
   };
+  return pc;
 }
 
-boot();
+function endCall() {
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  document.getElementById('btn-call').classList.remove('active');
+  if (ticketId) socket?.emit('rtc:call-end', { ticketId });
+  peerSocketId = null;
+}
+
+// Resume existing ticket
+if (ticketId && accessToken) {
+  fetch(`/api/tickets/${ticketId}/status?token=${accessToken}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        localStorage.removeItem('support_ticket');
+        return;
+      }
+      if (data.status === 'waiting') {
+        showStatus(data);
+        connectSocket();
+      } else if (data.status === 'active' || data.status === 'closed') {
+        showChat(data);
+        connectSocket();
+        if (data.status === 'active') {
+          // load messages via socket
+        }
+      }
+    })
+    .catch(() => {});
+}
 </script>
 </body>
 </html>
