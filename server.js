@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 const { nanoid } = require('nanoid');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
-const { db } = require('./db');
+const { db, stmts, closeDb } = require('./db');
 
 const app = express();
 app.use(express.json());
@@ -34,7 +34,7 @@ const upload = multer({
 // ---------------- in-memory sessions ----------------
 const adminSessions = new Map(); // token -> adminId
 
-function getAdminById(id) { return db.prepare('SELECT * FROM admins WHERE id = ?').get(id); }
+function getAdminById(id) { return stmts.getAdminById.get(id); }
 function publicAdmin(a) { return { id: a.id, email: a.email, name: a.name, role: a.role }; }
 
 function requireAdminAuth(req, res, next) {
@@ -52,7 +52,7 @@ function requireOwner(req, res, next) {
 }
 
 // ---------------- ticket helpers ----------------
-function getTicket(id) { return db.prepare('SELECT * FROM tickets WHERE id = ?').get(id); }
+function getTicket(id) { return stmts.getTicket.get(id); }
 function publicTicket(t) {
   if (!t) return null;
   const { access_token, ...rest } = t;
@@ -61,17 +61,11 @@ function publicTicket(t) {
 function queuePosition(ticketId) {
   const t = getTicket(ticketId);
   if (!t || t.status !== 'waiting') return 0;
-  const row = db.prepare(
-    `SELECT COUNT(*) c FROM tickets WHERE status = 'waiting' AND id <= ?`
-  ).get(ticketId);
+  const row = stmts.queueCount.get(ticketId);
   return row.c;
 }
 function avgHandlingSeconds() {
-  const rows = db.prepare(
-    `SELECT accepted_at, closed_at FROM tickets
-     WHERE status = 'closed' AND accepted_at IS NOT NULL AND closed_at IS NOT NULL
-     ORDER BY id DESC LIMIT 20`
-  ).all();
+  const rows = stmts.avgHandling.all();
   if (!rows.length) return 300; // default estimate: 5 minutes
   const total = rows.reduce((sum, r) => {
     const secs = (new Date(r.closed_at + 'Z') - new Date(r.accepted_at + 'Z')) / 1000;
@@ -91,24 +85,27 @@ function ticketStatusPayload(ticketId) {
   };
 }
 function broadcastQueue() {
-  const waiting = db.prepare(`SELECT id FROM tickets WHERE status = 'waiting' ORDER BY id`).all();
+  const waiting = stmts.waitingIds.all();
   waiting.forEach(w => io.to('ticket:' + w.id).emit('ticket:status', ticketStatusPayload(w.id)));
   io.to('admins:queue').emit('queue:update');
 }
 
 // ---------------- PUBLIC: ticket creation & status ----------------
 app.post('/api/tickets', (req, res) => {
-  const { customerName, customerContact, subject } = req.body;
-  if (!customerName || !customerName.trim()) return res.status(400).json({ error: 'الاسم مطلوب' });
-  if (!subject || !subject.trim()) return res.status(400).json({ error: 'اكتب تفاصيل طلبك' });
-  const accessToken = nanoid(24);
-  const info = db.prepare(
-    `INSERT INTO tickets (access_token, customer_name, customer_contact, subject) VALUES (?, ?, ?, ?)`
-  ).run(accessToken, customerName.trim(), (customerContact || '').trim(), subject.trim());
-  const id = info.lastInsertRowid;
-  broadcastQueue();
-  const status = ticketStatusPayload(id);
-  res.json({ ...status, accessToken });
+  try {
+    const { customerName, customerContact, subject } = req.body;
+    if (!customerName || !customerName.trim()) return res.status(400).json({ error: 'الاسم مطلوب' });
+    if (!subject || !subject.trim()) return res.status(400).json({ error: 'اكتب تفاصيل طلبك' });
+    const accessToken = nanoid(24);
+    const info = stmts.insertTicket.run(accessToken, customerName.trim(), (customerContact || '').trim(), subject.trim());
+    const id = info.lastInsertRowid;
+    broadcastQueue();
+    const status = ticketStatusPayload(id);
+    res.json({ ...status, accessToken });
+  } catch (e) {
+    console.error('create ticket error', e);
+    res.status(500).json({ error: 'خطأ في السيرفر' });
+  }
 });
 
 function verifyTicketToken(req, res, next) {
@@ -124,7 +121,7 @@ app.get('/api/tickets/:id/status', verifyTicketToken, (req, res) => {
 });
 
 app.get('/api/tickets/:id/messages', verifyTicketToken, (req, res) => {
-  res.json(db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id').all(req.ticket.id));
+  res.json(stmts.listMessages.all(req.ticket.id));
 });
 
 // ---------------- uploads (customer needs ticket token, admin needs auth) ----------------
@@ -144,15 +141,20 @@ app.post('/api/upload', (req, res, next) => {
 
 // ---------------- ADMIN auth ----------------
 app.post('/api/admin/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'أدخل الإيميل وكلمة المرور' });
-  const admin = db.prepare('SELECT * FROM admins WHERE email = ? COLLATE NOCASE').get(email.trim());
-  if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
-    return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'أدخل الإيميل وكلمة المرور' });
+    const admin = stmts.getAdminByEmail.get(email.trim());
+    if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
+      return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
+    }
+    const token = nanoid(32);
+    adminSessions.set(token, admin.id);
+    res.json({ token, admin: publicAdmin(admin) });
+  } catch (e) {
+    console.error('login error', e);
+    res.status(500).json({ error: 'خطأ في السيرفر' });
   }
-  const token = nanoid(32);
-  adminSessions.set(token, admin.id);
-  res.json({ token, admin: publicAdmin(admin) });
 });
 app.get('/api/admin/me', requireAdminAuth, (req, res) => res.json({ admin: publicAdmin(req.admin) }));
 
@@ -162,22 +164,22 @@ app.post('/api/admin/admins', requireAdminAuth, requireOwner, (req, res) => {
   if (password.length < 6) return res.status(400).json({ error: 'كلمة المرور لازم تكون 6 أحرف على الأقل' });
   try {
     const hash = bcrypt.hashSync(password, 10);
-    const info = db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'admin')`)
-      .run(email.trim(), hash, name.trim());
+    const info = stmts.insertAdmin.run(email.trim(), hash, name.trim());
     res.json(publicAdmin(getAdminById(info.lastInsertRowid)));
   } catch (e) {
     if (String(e.message).includes('UNIQUE')) return res.status(409).json({ error: 'هذا الإيميل مستخدم من قبل' });
+    console.error(e);
     res.status(500).json({ error: 'خطأ غير متوقع' });
   }
 });
 app.get('/api/admin/admins', requireAdminAuth, requireOwner, (req, res) => {
-  res.json(db.prepare('SELECT id, email, name, role FROM admins ORDER BY id').all());
+  res.json(stmts.listAdmins.all());
 });
 app.delete('/api/admin/admins/:id', requireAdminAuth, requireOwner, (req, res) => {
   const target = getAdminById(req.params.id);
   if (!target) return res.status(404).json({ error: 'غير موجود' });
   if (target.role === 'owner') return res.status(400).json({ error: 'لا يمكن حذف المالك' });
-  db.prepare('DELETE FROM admins WHERE id = ?').run(req.params.id);
+  stmts.deleteAdmin.run(req.params.id);
   for (const [tok, id] of adminSessions) if (id === Number(req.params.id)) adminSessions.delete(tok);
   res.json({ ok: true });
 });
@@ -186,8 +188,8 @@ app.delete('/api/admin/admins/:id', requireAdminAuth, requireOwner, (req, res) =
 app.get('/api/admin/tickets', requireAdminAuth, (req, res) => {
   const status = req.query.status;
   const rows = status
-    ? db.prepare('SELECT * FROM tickets WHERE status = ? ORDER BY id').all(status)
-    : db.prepare('SELECT * FROM tickets ORDER BY id DESC LIMIT 300').all();
+    ? stmts.listTicketsByStatus.all(status)
+    : stmts.listTicketsRecent.all();
   res.json(rows.map(publicTicket));
 });
 app.get('/api/admin/tickets/:id', requireAdminAuth, (req, res) => {
@@ -196,20 +198,16 @@ app.get('/api/admin/tickets/:id', requireAdminAuth, (req, res) => {
   res.json(publicTicket(t));
 });
 app.get('/api/admin/tickets/:id/messages', requireAdminAuth, (req, res) => {
-  res.json(db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id').all(req.params.id));
+  res.json(stmts.listMessages.all(req.params.id));
 });
 
 app.post('/api/admin/tickets/:id/accept', requireAdminAuth, (req, res) => {
   const t = getTicket(req.params.id);
   if (!t) return res.status(404).json({ error: 'غير موجود' });
   if (t.status !== 'waiting') return res.status(409).json({ error: 'الطلب تم التعامل معه بالفعل' });
-  db.prepare(
-    `UPDATE tickets SET status = 'active', assigned_admin_id = ?, assigned_admin_name = ?, accepted_at = datetime('now') WHERE id = ?`
-  ).run(req.admin.id, req.admin.name, t.id);
-  const sysMsg = db.prepare(
-    `INSERT INTO messages (ticket_id, sender_type, sender_name, content) VALUES (?, 'system', 'النظام', ?)`
-  ).run(t.id, `تم الاتصال بك من قبل ${req.admin.name} — كيف نقدر نساعدك؟`);
-  const msg = db.prepare('SELECT * FROM messages WHERE id = ?').get(sysMsg.lastInsertRowid);
+  stmts.acceptTicket.run(req.admin.id, req.admin.name, t.id);
+  const sysMsg = stmts.insertSystemMessage.run(t.id, `تم الاتصال بك من قبل ${req.admin.name} — كيف نقدر نساعدك؟`);
+  const msg = stmts.getMessageById.get(sysMsg.lastInsertRowid);
   io.to('ticket:' + t.id).emit('ticket:message', msg);
   broadcastQueue();
   res.json(ticketStatusPayload(t.id));
@@ -220,27 +218,19 @@ app.post('/api/admin/tickets/:id/close', requireAdminAuth, (req, res) => {
   if (!t) return res.status(404).json({ error: 'غير موجود' });
   const { outcome, solution } = req.body;
   const out = ['approved', 'rejected'].includes(outcome) ? outcome : null;
-  db.prepare(
-    `UPDATE tickets SET status = 'closed', outcome = ?, solution = ?, closed_at = datetime('now') WHERE id = ?`
-  ).run(out, (solution || '').trim(), t.id);
+  stmts.closeTicket.run(out, (solution || '').trim(), t.id);
   io.to('ticket:' + t.id).emit('ticket:status', ticketStatusPayload(t.id));
   io.to('admins:queue').emit('queue:update');
   res.json(ticketStatusPayload(t.id));
 });
 
 app.get('/api/admin/stats', requireAdminAuth, (req, res) => {
-  const todayResolved = db.prepare(
-    `SELECT COUNT(*) c FROM tickets WHERE status = 'closed' AND date(closed_at) = date('now')`
-  ).get().c;
-  const totalTickets = db.prepare('SELECT COUNT(*) c FROM tickets').get().c;
-  const totalResolved = db.prepare(`SELECT COUNT(*) c FROM tickets WHERE status = 'closed'`).get().c;
-  const waitingNow = db.prepare(`SELECT COUNT(*) c FROM tickets WHERE status = 'waiting'`).get().c;
-  const activeNow = db.prepare(`SELECT COUNT(*) c FROM tickets WHERE status = 'active'`).get().c;
-  const byAdminToday = db.prepare(
-    `SELECT assigned_admin_name name, COUNT(*) c FROM tickets
-     WHERE status = 'closed' AND date(closed_at) = date('now') AND assigned_admin_name IS NOT NULL
-     GROUP BY assigned_admin_name ORDER BY c DESC`
-  ).all();
+  const todayResolved = stmts.todayResolved.get().c;
+  const totalTickets = stmts.totalTickets.get().c;
+  const totalResolved = stmts.totalResolved.get().c;
+  const waitingNow = stmts.waitingNow.get().c;
+  const activeNow = stmts.activeNow.get().c;
+  const byAdminToday = stmts.byAdminToday.all();
   res.json({ todayResolved, totalTickets, totalResolved, waitingNow, activeNow, byAdminToday, avgHandlingSeconds: avgHandlingSeconds() });
 });
 
@@ -264,13 +254,13 @@ io.on('connection', (socket) => {
     if (!t) return;
     if (socket.admin) {
       socket.join('ticket:' + ticketId);
-      socket.emit('ticket:history', db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id').all(ticketId));
+      socket.emit('ticket:history', stmts.listMessages.all(ticketId));
       return;
     }
     if (accessToken && accessToken === t.access_token) {
       socket.join('ticket:' + ticketId);
       socket.ticketId = String(ticketId);
-      socket.emit('ticket:history', db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id').all(ticketId));
+      socket.emit('ticket:history', stmts.listMessages.all(ticketId));
     }
   });
 
@@ -296,10 +286,8 @@ io.on('connection', (socket) => {
     }
     if (!finalContent && !attachmentUrl) return;
 
-    const info = db.prepare(
-      `INSERT INTO messages (ticket_id, sender_type, sender_name, content, attachment_url, attachment_type) VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(ticketId, senderType, senderName, finalContent, attachmentUrl || null, attachmentType || null);
-    const msg = db.prepare('SELECT * FROM messages WHERE id = ?').get(info.lastInsertRowid);
+    const info = stmts.insertMessage.run(ticketId, senderType, senderName, finalContent, attachmentUrl || null, attachmentType || null);
+    const msg = stmts.getMessageById.get(info.lastInsertRowid);
     io.to('ticket:' + ticketId).emit('ticket:message', msg);
   });
 
@@ -318,3 +306,15 @@ server.listen(PORT, () => {
   console.log('Support desk server running on port', PORT);
   console.log('Owner login: slomsalman2@gmail.com (password as set)');
 });
+
+// Graceful shutdown
+function shutdown() {
+  console.log('Shutting down...');
+  server.close(() => {
+    closeDb();
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 5000);
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
