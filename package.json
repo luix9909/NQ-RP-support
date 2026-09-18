@@ -1,17 +1,16 @@
 {
   "name": "support-desk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Support ticket queue + live chat/voice helpdesk with an admin dashboard",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": "22.x || 24.x"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^13.0.3",
     "express": "^4.19.2",
     "multer": "^2.4.0",
     "nanoid": "^3.3.7",

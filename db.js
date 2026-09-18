@@ -1,18 +1,18 @@
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
 
-// On Render free tier the project dir can be tricky; prefer /tmp if DB_PATH not set
+// Prefer /tmp on Render free (ephemeral anyway) to avoid any project-dir quirks
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'support.db');
 const dbDir = path.dirname(dbPath);
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-const db = new Database(dbPath);
-db.pragma('journal_mode = WAL');
-db.pragma('busy_timeout = 5000');
+const db = new DatabaseSync(dbPath);
+db.exec('PRAGMA journal_mode = WAL;');
+db.exec('PRAGMA busy_timeout = 5000;');
 
 // Create tables
 db.exec(`
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS admins (
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   name TEXT NOT NULL,
-  role TEXT NOT NULL DEFAULT 'admin', -- owner | admin
+  role TEXT NOT NULL DEFAULT 'admin',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -31,10 +31,10 @@ CREATE TABLE IF NOT EXISTS tickets (
   customer_name TEXT NOT NULL,
   customer_contact TEXT,
   subject TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'waiting', -- waiting | active | closed
+  status TEXT NOT NULL DEFAULT 'waiting',
   assigned_admin_id INTEGER,
   assigned_admin_name TEXT,
-  outcome TEXT, -- approved | rejected | null
+  outcome TEXT,
   solution TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   accepted_at TEXT,
@@ -44,28 +44,27 @@ CREATE TABLE IF NOT EXISTS tickets (
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ticket_id INTEGER NOT NULL,
-  sender_type TEXT NOT NULL, -- customer | admin | system
+  sender_type TEXT NOT NULL,
   sender_name TEXT NOT NULL,
   content TEXT,
   attachment_url TEXT,
-  attachment_type TEXT, -- image | video | audio
+  attachment_type TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 `);
 
 // Seed the fixed owner account once
-const ownerRow = db.prepare('SELECT * FROM admins WHERE role = ?').get('owner');
+const ownerCheck = db.prepare('SELECT * FROM admins WHERE role = ?');
+const ownerRow = ownerCheck.get('owner');
 if (!ownerRow) {
   const hash = bcrypt.hashSync('asdasd1428D', 10);
   db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'owner')`)
     .run('slomsalman2@gmail.com', hash, 'المالك');
 } else {
-  // keep the owner's email fixed/correct without touching their password if they changed it
   db.prepare(`UPDATE admins SET email = ? WHERE role = 'owner'`).run('slomsalman2@gmail.com');
 }
 
-// Pre-prepare frequently used statements (avoids create/destroy churn that triggers
-// native cleanup crashes on some Node + better-sqlite3 combinations on Render)
+// Pre-prepare statements (same API shape as better-sqlite3 for easy migration)
 const stmts = {
   getAdminById: db.prepare('SELECT * FROM admins WHERE id = ?'),
   getAdminByEmail: db.prepare('SELECT * FROM admins WHERE email = ? COLLATE NOCASE'),
@@ -104,7 +103,6 @@ const stmts = {
   getMessageById: db.prepare('SELECT * FROM messages WHERE id = ?'),
   listMessages: db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id'),
 
-  // stats
   todayResolved: db.prepare(
     `SELECT COUNT(*) AS c FROM tickets WHERE status = 'closed' AND date(closed_at) = date('now')`
   ),
@@ -121,7 +119,7 @@ const stmts = {
 
 function closeDb() {
   try {
-    if (db && db.open) db.close();
+    if (db) db.close();
   } catch (_) {}
 }
 
