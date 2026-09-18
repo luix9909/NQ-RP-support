@@ -3,18 +3,14 @@ const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
 
-// Prefer /tmp on Render free (ephemeral anyway) to avoid any project-dir quirks
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'support.db');
 const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
-}
+if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
 
 const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA busy_timeout = 5000;');
 
-// Create tables
 db.exec(`
 CREATE TABLE IF NOT EXISTS admins (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,11 +27,16 @@ CREATE TABLE IF NOT EXISTS tickets (
   customer_name TEXT NOT NULL,
   customer_contact TEXT,
   subject TEXT NOT NULL,
+  problem_location TEXT,
+  problem_details TEXT,
   status TEXT NOT NULL DEFAULT 'waiting',
   assigned_admin_id INTEGER,
   assigned_admin_name TEXT,
   outcome TEXT,
   solution TEXT,
+  rating INTEGER,
+  rating_reason TEXT,
+  rated_at TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   accepted_at TEXT,
   closed_at TEXT
@@ -53,9 +54,14 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 `);
 
-// Seed the fixed owner account once
-const ownerCheck = db.prepare('SELECT * FROM admins WHERE role = ?');
-const ownerRow = ownerCheck.get('owner');
+// Migrations for existing DBs
+try { db.exec('ALTER TABLE tickets ADD COLUMN problem_location TEXT'); } catch {}
+try { db.exec('ALTER TABLE tickets ADD COLUMN problem_details TEXT'); } catch {}
+try { db.exec('ALTER TABLE tickets ADD COLUMN rating INTEGER'); } catch {}
+try { db.exec('ALTER TABLE tickets ADD COLUMN rating_reason TEXT'); } catch {}
+try { db.exec('ALTER TABLE tickets ADD COLUMN rated_at TEXT'); } catch {}
+
+const ownerRow = db.prepare('SELECT * FROM admins WHERE role = ?').get('owner');
 if (!ownerRow) {
   const hash = bcrypt.hashSync('asdasd1428D', 10);
   db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'owner')`)
@@ -64,29 +70,31 @@ if (!ownerRow) {
   db.prepare(`UPDATE admins SET email = ? WHERE role = 'owner'`).run('slomsalman2@gmail.com');
 }
 
-// Pre-prepare statements (same API shape as better-sqlite3 for easy migration)
 const stmts = {
   getAdminById: db.prepare('SELECT * FROM admins WHERE id = ?'),
   getAdminByEmail: db.prepare('SELECT * FROM admins WHERE email = ? COLLATE NOCASE'),
   insertAdmin: db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'admin')`),
-  listAdmins: db.prepare('SELECT id, email, name, role FROM admins ORDER BY id'),
+  listAdmins: db.prepare('SELECT id, email, name, role, created_at FROM admins ORDER BY id'),
   deleteAdmin: db.prepare('DELETE FROM admins WHERE id = ?'),
+  updateAdmin: db.prepare('UPDATE admins SET name = ?, email = ? WHERE id = ?'),
 
   getTicket: db.prepare('SELECT * FROM tickets WHERE id = ?'),
+  getTicketByToken: db.prepare('SELECT * FROM tickets WHERE access_token = ?'),
   insertTicket: db.prepare(
-    `INSERT INTO tickets (access_token, customer_name, customer_contact, subject) VALUES (?, ?, ?, ?)`
+    `INSERT INTO tickets (access_token, customer_name, customer_contact, subject, problem_location, problem_details) VALUES (?, ?, ?, ?, ?, ?)`
   ),
   listTicketsByStatus: db.prepare('SELECT * FROM tickets WHERE status = ? ORDER BY id'),
-  listTicketsRecent: db.prepare('SELECT * FROM tickets ORDER BY id DESC LIMIT 300'),
+  listTicketsRecent: db.prepare('SELECT * FROM tickets ORDER BY id DESC LIMIT 400'),
   acceptTicket: db.prepare(
     `UPDATE tickets SET status = 'active', assigned_admin_id = ?, assigned_admin_name = ?, accepted_at = datetime('now') WHERE id = ?`
   ),
   closeTicket: db.prepare(
     `UPDATE tickets SET status = 'closed', outcome = ?, solution = ?, closed_at = datetime('now') WHERE id = ?`
   ),
-  queueCount: db.prepare(
-    `SELECT COUNT(*) AS c FROM tickets WHERE status = 'waiting' AND id <= ?`
+  rateTicket: db.prepare(
+    `UPDATE tickets SET rating = ?, rating_reason = ?, rated_at = datetime('now') WHERE id = ? AND access_token = ?`
   ),
+  queueCount: db.prepare(`SELECT COUNT(*) AS c FROM tickets WHERE status = 'waiting' AND id <= ?`),
   waitingIds: db.prepare(`SELECT id FROM tickets WHERE status = 'waiting' ORDER BY id`),
   avgHandling: db.prepare(
     `SELECT accepted_at, closed_at FROM tickets
@@ -103,9 +111,7 @@ const stmts = {
   getMessageById: db.prepare('SELECT * FROM messages WHERE id = ?'),
   listMessages: db.prepare('SELECT * FROM messages WHERE ticket_id = ? ORDER BY id'),
 
-  todayResolved: db.prepare(
-    `SELECT COUNT(*) AS c FROM tickets WHERE status = 'closed' AND date(closed_at) = date('now')`
-  ),
+  todayResolved: db.prepare(`SELECT COUNT(*) AS c FROM tickets WHERE status = 'closed' AND date(closed_at) = date('now')`),
   totalTickets: db.prepare('SELECT COUNT(*) AS c FROM tickets'),
   totalResolved: db.prepare(`SELECT COUNT(*) AS c FROM tickets WHERE status = 'closed'`),
   waitingNow: db.prepare(`SELECT COUNT(*) AS c FROM tickets WHERE status = 'waiting'`),
@@ -115,14 +121,32 @@ const stmts = {
      WHERE status = 'closed' AND date(closed_at) = date('now') AND assigned_admin_name IS NOT NULL
      GROUP BY assigned_admin_name ORDER BY c DESC`
   ),
+
+  // Ratings / reviews for owner
+  adminRatings: db.prepare(
+    `SELECT t.id, t.customer_name, t.subject, t.rating, t.rating_reason, t.rated_at, t.outcome, t.solution,
+            t.assigned_admin_id, t.assigned_admin_name, t.closed_at
+     FROM tickets t
+     WHERE t.rating IS NOT NULL
+     ORDER BY t.rated_at DESC LIMIT 500`
+  ),
+  ratingsByAdmin: db.prepare(
+    `SELECT assigned_admin_id, assigned_admin_name,
+            COUNT(*) AS total,
+            AVG(rating) AS avg_rating,
+            SUM(CASE WHEN rating <= 3 THEN 1 ELSE 0 END) AS low_count
+     FROM tickets
+     WHERE rating IS NOT NULL AND assigned_admin_id IS NOT NULL
+     GROUP BY assigned_admin_id, assigned_admin_name
+     ORDER BY avg_rating ASC`
+  ),
+  deleteTicket: db.prepare('DELETE FROM tickets WHERE id = ?'),
+  deleteMessages: db.prepare('DELETE FROM messages WHERE ticket_id = ?'),
 };
 
 function closeDb() {
-  try {
-    if (db) db.close();
-  } catch (_) {}
+  try { if (db) db.close(); } catch {}
 }
-
 process.on('SIGINT', () => { closeDb(); process.exit(0); });
 process.on('SIGTERM', () => { closeDb(); process.exit(0); });
 process.on('exit', closeDb);

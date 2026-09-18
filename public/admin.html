@@ -13,10 +13,10 @@
   --bg-3: #1a2d3f;
   --line: #1e3348;
   --line-2: #2a455c;
-  --teal: #14b8a6;
-  --teal-2: #5eead4;
-  --teal-dim: #0d6b62;
-  --teal-glow: rgba(20,184,166,.15);
+  --purple: #a855f7;
+  --purple-2: #c084fc;
+  --purple-dim: #6b21a8;
+  --purple-glow: rgba(168,85,247,.15);
   --text-0: #f0f7fa;
   --text-1: #a8c0cc;
   --text-2: #6b8a99;
@@ -36,7 +36,7 @@ body {
   background: var(--bg-0);
   color: var(--text-0);
   overflow: hidden;
-  background-image: radial-gradient(ellipse at 20% 0%, rgba(20,184,166,.06) 0%, transparent 50%),
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(168,85,247,.06) 0%, transparent 50%),
                     radial-gradient(ellipse at 80% 100%, rgba(167,139,250,.04) 0%, transparent 50%);
 }
 .hidden { display: none !important; }
@@ -66,7 +66,7 @@ input, textarea, select { font-family: inherit; }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--teal), var(--purple));
+  background: linear-gradient(90deg, var(--purple), var(--purple));
 }
 .login-card h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
 .login-card p { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
@@ -83,11 +83,11 @@ input, textarea, select { font-family: inherit; }
   outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
-.field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-glow); }
+.field input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
 .primary-btn {
   width: 100%;
-  background: linear-gradient(135deg, var(--teal-2), var(--teal));
-  color: #022c26;
+  background: linear-gradient(135deg, var(--purple-2), var(--purple));
+  color: #1a052e;
   font-weight: 700;
   padding: 15px;
   border-radius: 12px;
@@ -95,7 +95,7 @@ input, textarea, select { font-family: inherit; }
   margin-top: 8px;
   transition: transform .15s, box-shadow .15s;
 }
-.primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(20,184,166,.3); }
+.primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,85,247,.3); }
 .err { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 18px; }
 
 /* ========== DASHBOARD ========== */
@@ -119,7 +119,7 @@ input, textarea, select { font-family: inherit; }
 }
 #nav .brand span {
   width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+  background: linear-gradient(135deg, var(--purple), var(--purple-dim));
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 15px;
@@ -138,13 +138,13 @@ input, textarea, select { font-family: inherit; }
 }
 .nav-btn:hover { background: var(--bg-2); color: var(--text-0); }
 .nav-btn.active {
-  background: var(--teal-glow);
-  color: var(--teal-2);
+  background: var(--purple-glow);
+  color: var(--purple-2);
   font-weight: 600;
 }
 .nav-badge {
   margin-inline-start: auto;
-  background: var(--teal);
+  background: var(--purple);
   color: #022;
   font-family: var(--mono);
   font-size: 11px;
@@ -209,7 +209,7 @@ input, textarea, select { font-family: inherit; }
   font-family: var(--mono);
   font-size: 13px;
   font-weight: 600;
-  color: var(--teal-2);
+  color: var(--purple-2);
   min-width: 42px;
 }
 .ticket-row .main { flex: 1; min-width: 0; }
@@ -223,7 +223,7 @@ input, textarea, select { font-family: inherit; }
   white-space: nowrap;
 }
 .badge.waiting { background: rgba(234,179,8,.12); color: var(--amber); }
-.badge.active { background: rgba(20,184,166,.12); color: var(--teal-2); }
+.badge.active { background: rgba(168,85,247,.12); color: var(--purple-2); }
 .badge.closed { background: rgba(107,138,153,.12); color: var(--text-2); }
 .tiny-btn {
   padding: 7px 14px;
@@ -256,7 +256,7 @@ input, textarea, select { font-family: inherit; }
   padding: 20px;
 }
 .stat-card .label { font-size: 12.5px; color: var(--text-2); margin-bottom: 8px; }
-.stat-card .value { font-size: 28px; font-weight: 800; font-family: var(--mono); color: var(--teal-2); }
+.stat-card .value { font-size: 28px; font-weight: 800; font-family: var(--mono); color: var(--purple-2); }
 
 /* ========== TICKET MODAL (BIG & BEAUTIFUL) ========== */
 .modal-bg {
@@ -313,7 +313,7 @@ input, textarea, select { font-family: inherit; }
   background: var(--bg-1);
 }
 .action-btn:hover { background: var(--bg-3); border-color: var(--line-2); }
-.action-btn.primary { background: var(--teal-dim); border-color: var(--teal); color: var(--teal-2); }
+.action-btn.primary { background: var(--purple-dim); border-color: var(--purple); color: var(--purple-2); }
 .action-btn.danger { border-color: rgba(239,68,68,.4); color: var(--red); }
 .action-btn.danger:hover { background: rgba(239,68,68,.1); }
 .action-btn.auto-on { background: rgba(167,139,250,.15); border-color: var(--purple); color: var(--purple); }
@@ -369,10 +369,10 @@ input, textarea, select { font-family: inherit; }
   position: relative;
 }
 .bubble-row.mine .bubble {
-  background: linear-gradient(135deg, var(--teal-dim), #0a5c54);
-  color: #e6fffb;
+  background: linear-gradient(135deg, var(--purple-dim), #0a5c54);
+  color: #f5f3ff;
   border-radius: 16px 16px 4px 16px;
-  box-shadow: 0 2px 12px rgba(20,184,166,.15);
+  box-shadow: 0 2px 12px rgba(168,85,247,.15);
 }
 .bubble-row.theirs .bubble {
   background: var(--bg-2);
@@ -444,7 +444,7 @@ input, textarea, select { font-family: inherit; }
   line-height: 1.5;
   transition: border-color .2s;
 }
-#tm-chat-input:focus { border-color: var(--teal); }
+#tm-chat-input:focus { border-color: var(--purple); }
 .icon-btn {
   width: 44px; height: 44px;
   border-radius: 12px;
@@ -458,9 +458,9 @@ input, textarea, select { font-family: inherit; }
 }
 .icon-btn:hover { background: var(--bg-3); color: var(--text-0); }
 .icon-btn.send {
-  background: linear-gradient(135deg, var(--teal-2), var(--teal));
+  background: linear-gradient(135deg, var(--purple-2), var(--purple));
   border: none;
-  color: #022c26;
+  color: #1a052e;
 }
 .icon-btn.send:hover { transform: scale(1.05); }
 
@@ -482,7 +482,7 @@ input, textarea, select { font-family: inherit; }
   cursor: pointer;
   transition: all .15s;
 }
-.cmd-hint span:hover { border-color: var(--teal); color: var(--teal-2); }
+.cmd-hint span:hover { border-color: var(--purple); color: var(--purple-2); }
 
 /* Incoming call overlay */
 #call-overlay {
@@ -549,7 +549,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 14px;
   outline: none;
 }
-.search-row input:focus { border-color: var(--teal); }
+.search-row input:focus { border-color: var(--purple); }
 
 /* Employees */
 .emp-form {
@@ -571,7 +571,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 13.5px;
   outline: none;
 }
-.emp-form input:focus { border-color: var(--teal); }
+.emp-form input:focus { border-color: var(--purple); }
 .emp-list .ticket-row { cursor: default; }
 .emp-list .ticket-row:hover { transform: none; }
 
@@ -609,7 +609,7 @@ input, textarea, select { font-family: inherit; }
 .link-btn.tiktok { background: #010101; border: 1px solid #333; }
 .link-btn.snapchat { background: #FFFC00; color: #000 !important; }
 .link-btn.facebook { background: #1877F2; }
-.link-btn.generic { background: var(--teal-dim); border: 1px solid var(--teal); }
+.link-btn.generic { background: var(--purple-dim); border: 1px solid var(--purple); }
 
 </style>
 </head>
@@ -640,6 +640,7 @@ input, textarea, select { font-family: inherit; }
     <button class="nav-btn" data-tab="archive">الأرشيف</button>
     <button class="nav-btn" data-tab="stats">الإحصائيات</button>
     <button class="nav-btn hidden" data-tab="employees" id="nav-employees">الموظفون</button>
+    <button class="nav-btn hidden" data-tab="reviews" id="nav-reviews">التقييمات</button>
     <div class="spacer"></div>
     <div class="me">مسجل كـ <b id="me-name">—</b></div>
     <button id="logout-btn">خروج</button>
@@ -733,7 +734,10 @@ function enterDash() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dash').classList.add('active');
   document.getElementById('me-name').textContent = me.name + (me.role === 'owner' ? ' (المالك)' : '');
-  if (me.role === 'owner') document.getElementById('nav-employees').classList.remove('hidden');
+  if (me.role === 'owner') {
+    document.getElementById('nav-employees').classList.remove('hidden');
+    document.getElementById('nav-reviews').classList.remove('hidden');
+  }
 
   socket = io({ auth: { adminToken: token } });
   socket.on('connect', () => {
@@ -822,6 +826,7 @@ function renderTab() {
   if (currentTab === 'archive') return renderArchiveTab(c);
   if (currentTab === 'stats') return renderStatsTab(c);
   if (currentTab === 'employees') return renderEmployeesTab(c);
+  if (currentTab === 'reviews') return renderReviewsTab(c);
 }
 
 async function renderQueueTab(c) {
@@ -838,7 +843,7 @@ async function renderQueueTab(c) {
           <div class="subject">${escapeHtml(t.subject)}</div>
         </div>
         <span class="badge waiting">دور ${t.position || '—'}</span>
-        <button class="tiny-btn accept-inline" data-id="${t.id}" style="color:var(--teal-2);border-color:var(--teal-dim);">قبول</button>
+        <button class="tiny-btn accept-inline" data-id="${t.id}" style="color:var(--purple-2);border-color:var(--purple-dim);">قبول</button>
       </div>`).join('') : '<div class="empty-note">لا يوجد أحد بالطابور حالياً ✨</div>');
   c.querySelectorAll('.accept-inline').forEach(btn => {
     btn.onclick = async (e) => { e.stopPropagation(); await acceptTicket(btn.dataset.id); };
@@ -901,7 +906,7 @@ async function renderStatsTab(c) {
       ${s.byAdminToday.length ? s.byAdminToday.map(r => `
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;">
           <span>${escapeHtml(r.name)}</span>
-          <span style="font-family:var(--mono);color:var(--teal-2);font-weight:700">${r.c}</span>
+          <span style="font-family:var(--mono);color:var(--purple-2);font-weight:700">${r.c}</span>
         </div>`).join('') : '<div class="empty-note" style="padding:30px">لا توجد بيانات بعد</div>'}
     </div>`;
 }
@@ -957,6 +962,62 @@ async function acceptTicket(id) {
     renderTab();
   } catch (e) { toast(e.message); }
 }
+
+
+async function renderReviewsTab(c) {
+  const data = await api('/api/admin/reviews');
+  const { list, summary } = data;
+  c.innerHTML = `<div class="page-title">تقييمات الموظفين</div>
+    <div class="stats-grid" style="margin-bottom:24px">
+      ${summary.map(s => `
+        <div class="stat-card">
+          <div class="label">${escapeHtml(s.assigned_admin_name||'—')}</div>
+          <div class="value" style="font-size:22px">${Number(s.avg_rating||0).toFixed(1)} ★</div>
+          <div style="font-size:12px;color:var(--text-2);margin-top:6px">${s.total} تقييم · ${s.low_count} منخفض</div>
+        </div>`).join('') || '<div class="empty-note">لا توجد تقييمات بعد</div>'}
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="tiny-btn" id="btn-print-reviews">🖨️ طباعة</button>
+      <button class="tiny-btn" id="btn-copy-reviews">📋 نسخ</button>
+    </div>
+    <div id="reviews-list">
+      ${list.map(r => `
+        <div class="ticket-row" style="cursor:default;flex-wrap:wrap">
+          <div class="num">#${r.id}</div>
+          <div class="main" style="min-width:180px">
+            <div class="name">${escapeHtml(r.customer_name)} → ${escapeHtml(r.assigned_admin_name||'')}</div>
+            <div class="subject">${escapeHtml(r.subject||'')}</div>
+            ${r.rating_reason ? `<div style="font-size:12px;color:var(--amber);margin-top:4px">💬 ${escapeHtml(r.rating_reason)}</div>` : ''}
+          </div>
+          <span class="badge" style="background:rgba(168,85,247,.15);color:var(--purple-2)">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</span>
+          <button class="tiny-btn del-review" data-id="${r.id}" style="color:var(--red);border-color:rgba(239,68,68,.3)">حذف</button>
+        </div>`).join('') || '<div class="empty-note">لا توجد تقييمات</div>'}
+    </div>`;
+  document.getElementById('btn-print-reviews').onclick = () => {
+    const w = window.open('', '_blank');
+    w.document.write('<html dir="rtl"><head><title>التقييمات</title><style>body{font-family:sans-serif;padding:20px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #ccc;padding:8px;text-align:right}</style></head><body>');
+    w.document.write('<h1>تقييمات الدعم الفني</h1><table><tr><th>#</th><th>العميل</th><th>الموظف</th><th>التقييم</th><th>السبب</th></tr>');
+    list.forEach(r => {
+      w.document.write(`<tr><td>${r.id}</td><td>${escapeHtml(r.customer_name)}</td><td>${escapeHtml(r.assigned_admin_name||'')}</td><td>${r.rating}</td><td>${escapeHtml(r.rating_reason||'')}</td></tr>`);
+    });
+    w.document.write('</table></body></html>');
+    w.document.close(); w.print();
+  };
+  document.getElementById('btn-copy-reviews').onclick = async () => {
+    const text = list.map(r => `#${r.id} | ${r.customer_name} | ${r.assigned_admin_name} | ${r.rating}★ | ${r.rating_reason||''}`).join('\n');
+    await navigator.clipboard.writeText(text);
+    toast('تم النسخ');
+  };
+  c.querySelectorAll('.del-review').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('حذف هذا التقييم/الطلب؟')) return;
+      await api('/api/admin/tickets/' + btn.dataset.id, { method: 'DELETE' });
+      toast('تم الحذف');
+      renderReviewsTab(c);
+    };
+  });
+}
+
 
 async function openTicket(id) {
   openTicketId = Number(id);
