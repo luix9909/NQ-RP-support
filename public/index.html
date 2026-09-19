@@ -2,632 +2,377 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>الدعم الفني</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ناقه — الدعم الفني</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-0: #050508;
-  --bg-1: #0c0c12;
-  --bg-2: #14141f;
-  --bg-3: #1c1c2b;
-  --line: #2a2a3d;
-  --purple: #a855f7;
-  --purple-2: #c084fc;
-  --purple-dim: #6b21a8;
-  --purple-glow: rgba(168,85,247,.25);
-  --text-0: #f5f3ff;
-  --text-1: #c4b5fd;
-  --text-2: #8b7cb3;
-  --red: #f43f5e;
-  --green: #34d399;
-  --amber: #fbbf24;
-  --font: 'Cairo', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+:root{
+  --bg:#07070c; --card:#100f18; --card2:#161522; --line:#2a2840;
+  --p:#a855f7; --p2:#c084fc; --pd:#6b21a8; --glow:rgba(168,85,247,.28);
+  --t0:#f5f3ff; --t1:#c4b5fd; --t2:#8b7cb3;
+  --red:#f43f5e; --green:#34d399; --font:'Cairo',system-ui,sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body {
-  font-family: var(--font);
-  background: var(--bg-0);
-  color: var(--text-0);
-  min-height: 100vh;
-  overflow-x: hidden;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(168,85,247,.18), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(107,33,168,.12), transparent),
-    radial-gradient(ellipse 40% 30% at 0% 80%, rgba(168,85,247,.08), transparent);
-}
-button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-input, textarea, select { font-family: inherit; color: var(--text-0); }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;}
+body{font-family:var(--font);background:var(--bg);color:var(--t0);min-height:100%;min-height:100dvh;
+  background-image:radial-gradient(ellipse 90% 50% at 50% -15%,rgba(168,85,247,.2),transparent),
+  radial-gradient(ellipse 50% 40% at 100% 100%,rgba(107,33,168,.12),transparent);}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;color:var(--t0);font-size:16px}
+
+/* screens */
+.screen{display:none;min-height:100%;min-height:100dvh}
+.screen.on{display:flex;flex-direction:column}
 
 /* FORM */
-.container { max-width: 520px; margin: 0 auto; padding: 36px 18px 50px; }
-.header { text-align: center; margin-bottom: 32px; }
-.header .logo {
-  width: 72px; height: 72px;
-  background: linear-gradient(135deg, var(--purple), var(--purple-dim));
-  border-radius: 22px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 32px; margin: 0 auto 16px;
-  box-shadow: 0 0 40px var(--purple-glow), 0 8px 24px rgba(0,0,0,.4);
-  animation: glowPulse 3s ease-in-out infinite;
-}
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 30px var(--purple-glow), 0 8px 24px rgba(0,0,0,.4); }
-  50% { box-shadow: 0 0 50px rgba(168,85,247,.4), 0 8px 24px rgba(0,0,0,.4); }
-}
-.header h1 { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--purple-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.header p { font-size: 14px; color: var(--text-2); margin-top: 8px; }
+#form-screen{align-items:center;padding:28px 16px 40px}
+.wrap{width:100%;max-width:440px}
+.logo{width:72px;height:72px;border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--p),var(--pd));padding:6px;
+  box-shadow:0 0 36px var(--glow),0 8px 24px rgba(0,0,0,.4);animation:gp 3s ease-in-out infinite}
+@keyframes gp{0%,100%{box-shadow:0 0 28px var(--glow)}50%{box-shadow:0 0 48px rgba(168,85,247,.45)}}
+h1{text-align:center;font-size:22px;font-weight:900;margin-bottom:6px;
+  background:linear-gradient(135deg,#fff,var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{text-align:center;font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px;
+  box-shadow:0 16px 48px rgba(0,0,0,.45)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;color:var(--t1);margin-bottom:6px;font-weight:600}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;
+  padding:13px 14px;outline:none;transition:.2s}
+.field textarea{min-height:88px;resize:vertical;line-height:1.55}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--glow)}
+.btn{width:100%;padding:15px;border-radius:13px;font-weight:800;font-size:15px;margin-top:6px;
+  background:linear-gradient(135deg,var(--p2),var(--p));color:#1a052e;
+  box-shadow:0 4px 20px var(--glow);transition:.15s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.55}
+.err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;min-height:18px}
 
-.card {
-  background: var(--bg-1);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 28px 22px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.03);
-}
-.field { margin-bottom: 18px; }
-.field label { display: block; font-size: 13px; color: var(--text-1); margin-bottom: 8px; font-weight: 600; }
-.field input, .field textarea, .field select {
-  width: 100%; background: var(--bg-0); border: 1px solid var(--line);
-  border-radius: 12px; padding: 14px 16px; font-size: 15px; outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
-.field textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
-.field input:focus, .field textarea:focus, .field select:focus {
-  border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow);
-}
-.primary-btn {
-  width: 100%; background: linear-gradient(135deg, var(--purple-2), var(--purple));
-  color: #1a052e; font-weight: 800; padding: 16px; border-radius: 14px; font-size: 16px;
-  margin-top: 8px; transition: transform .15s, box-shadow .15s;
-  box-shadow: 0 4px 20px var(--purple-glow);
-}
-.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,.4); }
-.primary-btn:disabled { opacity: .55; transform: none; }
-.err { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; min-height: 18px; }
+/* WAIT */
+#wait-screen{position:relative;overflow:hidden}
+.wait-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 25%,rgba(168,85,247,.16),transparent 55%)}
+.wait-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 20px;text-align:center;position:relative;z-index:2}
+.wait-icon{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin-bottom:18px;background:linear-gradient(135deg,var(--pd),var(--p));
+  box-shadow:0 0 50px var(--glow);animation:fl 3.2s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.wait-body h2{font-size:20px;font-weight:900;margin-bottom:8px}
+.wait-body .desc{font-size:14px;color:var(--t1);max-width:300px;line-height:1.7;margin-bottom:22px}
+.qrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.qbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 20px;min-width:108px}
+.qbox .v{font-size:26px;font-weight:900;color:var(--p2)}
+.qbox .l{font-size:11px;color:var(--t2);margin-top:3px}
+.tips{width:100%;max-width:340px;margin-top:18px;text-align:right}
+.tips h3{font-size:12px;color:var(--t2);margin-bottom:8px;font-weight:600}
+.tip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  font-size:12.5px;color:var(--t1);margin-bottom:6px;line-height:1.45}
+.tip b{color:var(--p2)}
 
-/* WAITING - EPIC */
-#status-screen { display: none; min-height: 100vh; position: relative; overflow: hidden; }
-#status-screen .bg-glow {
-  position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(circle at 50% 30%, rgba(168,85,247,.15), transparent 55%);
-}
-.waiting-layout {
-  display: grid; grid-template-columns: 1fr 200px; min-height: 100vh; max-width: 900px; margin: 0 auto;
-}
-@media (max-width: 700px) { .waiting-layout { grid-template-columns: 1fr; } .side-ticker { display: none !important; } }
+/* CHAT full */
+#chat-screen{height:100%;height:100dvh}
+.ch{padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  box-shadow:0 0 24px rgba(168,85,247,.08)}
+.ch .nm{font-weight:800;font-size:14.5px}
+.ch .st{font-size:11.5px;color:var(--t2)}
+.call{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;
+  align-items:center;justify-content:center;font-size:17px;background:var(--card2)}
+.call.on{background:var(--p);border-color:var(--p);box-shadow:0 0 18px var(--glow)}
+#scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
+  background:linear-gradient(180deg,var(--bg),var(--card));-webkit-overflow-scrolling:touch}
+.row{display:flex}
+.row.me{justify-content:flex-end}
+.row.them{justify-content:flex-start}
+.row.sys{justify-content:center}
+.bub{max-width:85%;padding:11px 14px;border-radius:15px;font-size:14px;line-height:1.65;word-break:break-word}
+.row.me .bub{background:linear-gradient(135deg,var(--pd),#4c1d95);border-radius:15px 15px 4px 15px;
+  box-shadow:0 2px 14px var(--glow)}
+.row.them .bub{background:var(--card2);border:1px solid var(--line);border-radius:15px 15px 15px 4px}
+.row.sys .bub{background:transparent;color:var(--t2);font-size:12px;border:1px dashed var(--line);
+  border-radius:8px;padding:7px 12px;max-width:92%;text-align:center}
+.bub .tm{font-size:10px;opacity:.45;margin-top:5px;text-align:end}
+.bub img,.bub video{max-width:100%;border-radius:10px;margin-top:6px;max-height:220px}
+.bub audio{margin-top:6px;width:200px}
+#typing{padding:3px 14px;font-size:11.5px;color:var(--t2);min-height:18px}
+.cf{display:flex;gap:8px;padding:10px 12px 14px;background:var(--card);border-top:1px solid var(--line);
+  align-items:flex-end;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.cf textarea{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:13px;
+  padding:12px 14px;outline:none;resize:none;min-height:44px;max-height:110px;line-height:1.45}
+.cf textarea:focus{border-color:var(--p)}
+.ib{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);display:flex;
+  align-items:center;justify-content:center;font-size:16px;background:var(--card2);flex-shrink:0}
+.ib.send{background:linear-gradient(135deg,var(--p2),var(--p));border:none;color:#1a052e}
 
-.waiting-main {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 40px 24px; text-align: center; position: relative; z-index: 2;
-}
-.waiting-icon {
-  width: 100px; height: 100px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple-dim), var(--purple));
-  display: flex; align-items: center; justify-content: center; font-size: 42px;
-  margin-bottom: 24px;
-  box-shadow: 0 0 60px var(--purple-glow);
-  animation: float 3.5s ease-in-out infinite;
-}
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-.waiting-main h2 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
-.waiting-main .desc { font-size: 15px; color: var(--text-1); max-width: 360px; line-height: 1.7; margin-bottom: 28px; }
-.queue-box {
-  display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
-}
-.queue-box .item {
-  background: var(--bg-1); border: 1px solid var(--line); border-radius: 16px;
-  padding: 18px 26px; min-width: 120px;
-  box-shadow: 0 0 20px rgba(168,85,247,.08);
-}
-.queue-box .val { font-size: 32px; font-weight: 900; font-family: var(--mono); color: var(--purple-2); }
-.queue-box .lbl { font-size: 12px; color: var(--text-2); margin-top: 4px; }
-.hold-note { font-size: 13px; color: var(--text-2); }
+.link-btn{display:inline-flex;align-items:center;gap:7px;margin-top:7px;padding:9px 12px;
+  border-radius:11px;font-size:13px;font-weight:600;text-decoration:none;color:#fff!important}
+.link-btn.discord{background:#5865F2}.link-btn.whatsapp{background:#25D366}
+.link-btn.telegram{background:#229ED9}
+.link-btn.instagram{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.link-btn.x{background:#000;border:1px solid #333}.link-btn.youtube{background:#FF0000}
+.link-btn.tiktok{background:#111;border:1px solid #333}.link-btn.snapchat{background:#FFFC00;color:#000!important}
+.link-btn.facebook{background:#1877F2}.link-btn.generic{background:var(--pd);border:1px solid var(--p)}
 
-/* Side ticker */
-.side-ticker {
-  background: var(--bg-1); border-right: 1px solid var(--line);
-  overflow: hidden; position: relative;
-}
-.ticker-track {
-  position: absolute; top: 0; left: 0; right: 0;
-  animation: tickerUp 40s linear infinite;
-  padding: 20px 14px;
-}
-@keyframes tickerUp {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
-}
-.ticker-item {
-  padding: 14px 0; border-bottom: 1px solid var(--line);
-  font-size: 12.5px; color: var(--text-2); line-height: 1.5;
-}
-.ticker-item b { color: var(--purple-2); display: block; margin-bottom: 3px; font-size: 13px; }
-
-/* CHAT full screen */
-#chat-screen { display: none; flex-direction: column; height: 100vh; height: 100dvh; width: 100%; }
-#chat-screen.active { display: flex; }
-.chat-header {
-  padding: 14px 18px; background: var(--bg-1); border-bottom: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 0 30px rgba(168,85,247,.08);
-}
-.chat-header .name { font-weight: 800; font-size: 15px; }
-.chat-header .status { font-size: 12px; color: var(--text-2); }
-.call-btn {
-  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
-  background: var(--bg-2); transition: all .15s;
-}
-.call-btn:hover, .call-btn.active { background: var(--purple); border-color: var(--purple); box-shadow: 0 0 20px var(--purple-glow); }
-#chat-scroll {
-  flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px;
-  background: linear-gradient(180deg, var(--bg-0), var(--bg-1));
-}
-.bubble-row { display: flex; animation: fadeUp .12s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
-.bubble-row.mine { justify-content: flex-end; }
-.bubble-row.theirs { justify-content: flex-start; }
-.bubble-row.system { justify-content: center; }
-.bubble {
-  max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14.5px; line-height: 1.7;
-}
-.bubble-row.mine .bubble {
-  background: linear-gradient(135deg, var(--purple-dim), #4c1d95);
-  border-radius: 16px 16px 4px 16px;
-  box-shadow: 0 2px 16px var(--purple-glow);
-}
-.bubble-row.theirs .bubble {
-  background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px 16px 16px 4px;
-}
-.bubble-row.system .bubble {
-  background: transparent; color: var(--text-2); font-size: 12.5px; font-family: var(--mono);
-  border: 1px dashed var(--line); border-radius: 8px; padding: 8px 14px; max-width: 92%; text-align: center;
-}
-.bubble .time { font-size: 10.5px; opacity: .5; margin-top: 6px; font-family: var(--mono); text-align: end; }
-.bubble img, .bubble video { max-width: 100%; border-radius: 10px; margin-top: 8px; max-height: 240px; }
-.bubble audio { margin-top: 8px; width: 220px; }
-#chat-typing { padding: 4px 18px; font-size: 12px; color: var(--text-2); font-family: var(--mono); min-height: 20px; }
-.chat-form {
-  display: flex; gap: 10px; padding: 12px 14px 18px; background: var(--bg-1); border-top: 1px solid var(--line);
-  align-items: flex-end;
-}
-.chat-form textarea {
-  flex: 1; background: var(--bg-0); border: 1px solid var(--line); border-radius: 14px;
-  padding: 13px 16px; font-size: 14.5px; outline: none; resize: none; min-height: 48px; max-height: 120px;
-}
-.chat-form textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 2px var(--purple-glow); }
-.icon-btn {
-  width: 46px; height: 46px; border-radius: 13px; border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center; font-size: 17px;
-  background: var(--bg-2); flex-shrink: 0;
-}
-.icon-btn.send {
-  background: linear-gradient(135deg, var(--purple-2), var(--purple)); border: none; color: #1a052e;
-}
-
-/* Link buttons */
-.link-btn {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 8px;
-  padding: 10px 14px; border-radius: 12px; font-size: 13.5px; font-weight: 600;
-  text-decoration: none; color: #fff !important; transition: transform .15s;
-}
-.link-btn:hover { transform: translateY(-1px); }
-.link-btn.discord { background: #5865F2; }
-.link-btn.whatsapp { background: #25D366; }
-.link-btn.telegram { background: #229ED9; }
-.link-btn.instagram { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
-.link-btn.x { background: #000; border: 1px solid #333; }
-.link-btn.youtube { background: #FF0000; }
-.link-btn.tiktok { background: #010101; border: 1px solid #333; }
-.link-btn.snapchat { background: #FFFC00; color: #000 !important; }
-.link-btn.facebook { background: #1877F2; }
-.link-btn.generic { background: var(--purple-dim); border: 1px solid var(--purple); }
-
-/* Rating modal */
-.rating-overlay {
-  position: fixed; inset: 0; background: rgba(5,5,8,.9); z-index: 200;
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  backdrop-filter: blur(8px);
-}
-.rating-card {
-  background: var(--bg-1); border: 1px solid var(--line); border-radius: 20px;
-  padding: 32px 28px; max-width: 400px; width: 100%; text-align: center;
-  box-shadow: 0 0 60px var(--purple-glow);
-}
-.rating-card h3 { font-size: 20px; margin-bottom: 8px; }
-.rating-card p { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
-.stars { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-.stars button {
-  font-size: 36px; opacity: .35; transition: all .15s; filter: grayscale(1);
-}
-.stars button.on, .stars button:hover { opacity: 1; filter: none; transform: scale(1.15); }
-.rating-reason { display: none; margin-bottom: 16px; }
-.rating-reason textarea {
-  width: 100%; background: var(--bg-0); border: 1px solid var(--line); border-radius: 12px;
-  padding: 12px; font-size: 14px; min-height: 80px; outline: none;
-}
-.rating-reason textarea:focus { border-color: var(--purple); }
+/* rating */
+.ro{position:fixed;inset:0;background:rgba(7,7,12,.92);z-index:100;display:flex;
+  align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(8px)}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;
+  max-width:360px;width:100%;text-align:center;box-shadow:0 0 50px var(--glow)}
+.rc h3{font-size:18px;margin-bottom:6px}
+.rc p{font-size:13px;color:var(--t2);margin-bottom:18px}
+.stars{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.stars button{font-size:32px;opacity:.3;filter:grayscale(1);transition:.15s}
+.stars button.on{opacity:1;filter:none;transform:scale(1.12)}
+#rr{display:none;margin-bottom:12px}
+#rr textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+  padding:11px;min-height:72px;outline:none}
 </style>
 </head>
 <body>
 
-<!-- FORM -->
-<div class="container" id="form-screen">
-  <div class="header">
-    <div class="logo">🎧</div>
-    <h1>الدعم الفني</h1>
-    <p>نحن هنا لمساعدتك. أجب على الأسئلة التالية بدقة.</p>
-  </div>
-  <div class="card">
-    <div class="field">
-      <label>اسمك الكامل</label>
-      <input id="f-name" placeholder="الاسم" autocomplete="name">
+<div class="screen on" id="form-screen">
+  <div class="wrap">
+    <div class="logo" style="padding:0;overflow:hidden;background:transparent;box-shadow:0 0 36px var(--glow)">
+      <img src="/logo.png" alt="ناقه" style="width:100%;height:100%;object-fit:contain">
     </div>
-    <div class="field">
-      <label>رقم التواصل (جوال أو إيميل)</label>
-      <input id="f-contact" placeholder="05xxxxxxxx أو email@example.com">
-    </div>
-    <div class="field">
-      <label>أين واجهتك المشكلة؟</label>
-      <select id="f-location">
-        <option value="">اختر...</option>
-        <option value="الموقع / التطبيق">الموقع / التطبيق</option>
-        <option value="الحساب وتسجيل الدخول">الحساب وتسجيل الدخول</option>
-        <option value="الدفع والفواتير">الدفع والفواتير</option>
-        <option value="الخدمة أو المنتج">الخدمة أو المنتج</option>
-        <option value="أخرى">أخرى</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>ما هي المشكلة باختصار؟</label>
-      <input id="f-subject" placeholder="مثال: لا أستطيع تسجيل الدخول">
-    </div>
-    <div class="field">
-      <label>اشرح المشكلة بالتفصيل</label>
-      <textarea id="f-details" placeholder="متى بدأت؟ ماذا جربت؟ أي رسالة خطأ ظهرت؟"></textarea>
-    </div>
-    <button class="primary-btn" id="f-submit">إرسال الطلب</button>
-    <div class="err" id="f-err"></div>
-  </div>
-</div>
-
-<!-- WAITING -->
-<div id="status-screen">
-  <div class="bg-glow"></div>
-  <div class="waiting-layout">
-    <div class="waiting-main">
-      <div class="waiting-icon" id="status-icon">⏳</div>
-      <h2 id="status-title">طلبك قيد الانتظار</h2>
-      <p class="desc" id="status-desc">سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.</p>
-      <div class="queue-box" id="queue-info">
-        <div class="item"><div class="val" id="q-pos">—</div><div class="lbl">دورك</div></div>
-        <div class="item"><div class="val" id="q-eta">—</div><div class="lbl">الوقت المتوقع</div></div>
+    <h1>ناقه</h1>
+    <p class="sub">مركز دعم ناقه — أجب على الأسئلة وسنساعدك بأسرع وقت</p>
+    <div class="card">
+      <div class="field"><label>اسمك</label><input id="f-name" placeholder="الاسم الكامل" autocomplete="name"></div>
+      <div class="field"><label>رقم التواصل</label><input id="f-contact" placeholder="جوال أو إيميل" inputmode="tel"></div>
+      <div class="field"><label>أين واجهتك المشكلة؟</label>
+        <select id="f-loc">
+          <option value="">اختر...</option>
+          <option>الموقع / التطبيق</option>
+          <option>الحساب وتسجيل الدخول</option>
+          <option>الدفع والفواتير</option>
+          <option>الخدمة أو المنتج</option>
+          <option>أخرى</option>
+        </select>
       </div>
-      <p class="hold-note" id="hold-note">يرجى عدم إغلاق الصفحة</p>
-    </div>
-    <div class="side-ticker">
-      <div class="ticker-track" id="ticker">
-        <div class="ticker-item"><b>نصيحة</b>تأكد من اتصالك بالإنترنت</div>
-        <div class="ticker-item"><b>نصيحة</b>جهز صورة أو رسالة الخطأ إن وجدت</div>
-        <div class="ticker-item"><b>نصيحة</b>الرد عادة خلال دقائق قليلة</div>
-        <div class="ticker-item"><b>نصيحة</b>يمكنك إرفاق ملفات بعد بدء المحادثة</div>
-        <div class="ticker-item"><b>نصيحة</b>كن واضحاً في وصف المشكلة</div>
-        <div class="ticker-item"><b>نصيحة</b>فريقنا جاهز لمساعدتك</div>
-        <div class="ticker-item"><b>نصيحة</b>تأكد من اتصالك بالإنترنت</div>
-        <div class="ticker-item"><b>نصيحة</b>جهز صورة أو رسالة الخطأ إن وجدت</div>
-        <div class="ticker-item"><b>نصيحة</b>الرد عادة خلال دقائق قليلة</div>
-        <div class="ticker-item"><b>نصيحة</b>يمكنك إرفاق ملفات بعد بدء المحادثة</div>
-        <div class="ticker-item"><b>نصيحة</b>كن واضحاً في وصف المشكلة</div>
-        <div class="ticker-item"><b>نصيحة</b>فريقنا جاهز لمساعدتك</div>
-      </div>
+      <div class="field"><label>ملخص المشكلة</label><input id="f-sub" placeholder="مثال: لا أستطيع الدخول"></div>
+      <div class="field"><label>التفاصيل</label><textarea id="f-det" placeholder="متى بدأت؟ ماذا جربت؟ أي رسالة خطأ؟"></textarea></div>
+      <button class="btn" id="f-go">إرسال الطلب</button>
+      <div class="err" id="f-err"></div>
     </div>
   </div>
 </div>
 
-<!-- CHAT -->
-<div id="chat-screen">
-  <div class="chat-header">
-    <div>
-      <div class="name" id="chat-admin-name">موظف الدعم</div>
-      <div class="status" id="chat-status">متصل</div>
+<div class="screen" id="wait-screen">
+  <div class="wait-bg"></div>
+  <div class="wait-body">
+    <div class="wait-icon" id="w-icon">⏳</div>
+    <h2 id="w-title">طلبك قيد الانتظار</h2>
+    <p class="desc" id="w-desc">سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.</p>
+    <div class="qrow" id="w-q">
+      <div class="qbox"><div class="v" id="w-pos">—</div><div class="l">دورك</div></div>
+      <div class="qbox"><div class="v" id="w-eta">—</div><div class="l">الوقت المتوقع</div></div>
     </div>
-    <button class="call-btn" id="btn-call" title="اتصال صوتي">📞</button>
+    <div class="tips">
+      <h3>نصائح سريعة</h3>
+      <div class="tip"><b>١.</b> جهّز صورة أو نص رسالة الخطأ إن وجدت</div>
+      <div class="tip"><b>٢.</b> تأكد من اتصالك بالإنترنت</div>
+      <div class="tip"><b>٣.</b> لا تغلق الصفحة حتى يتم الرد عليك</div>
+      <div class="tip"><b>٤.</b> بعد بدء المحادثة يمكنك إرفاق ملفات</div>
+    </div>
   </div>
-  <div id="chat-scroll"></div>
-  <div id="chat-typing"></div>
-  <div id="closed-area"></div>
-  <form class="chat-form" id="chat-form">
-    <button type="button" class="icon-btn" id="btn-attach">📎</button>
-    <textarea id="chat-input" placeholder="اكتب رسالتك..." rows="1"></textarea>
-    <button type="submit" class="icon-btn send">➤</button>
+</div>
+
+<div class="screen" id="chat-screen">
+  <div class="ch">
+    <div><div class="nm" id="c-name">موظف الدعم</div><div class="st" id="c-st">متصل</div></div>
+    <button class="call" id="c-call">📞</button>
+  </div>
+  <div id="scroll"></div>
+  <div id="typing"></div>
+  <div id="closed"></div>
+  <form class="cf" id="c-form">
+    <button type="button" class="ib" id="c-att">📎</button>
+    <textarea id="c-in" placeholder="اكتب رسالتك..." rows="1"></textarea>
+    <button type="submit" class="ib send">➤</button>
   </form>
 </div>
 
-<audio id="hold-music" loop preload="auto" src="/audio/hold-music.mp3"></audio>
-<audio id="remote-audio" autoplay></audio>
-
+<audio id="music" loop preload="auto" src="/audio/hold-music.mp3"></audio>
+<audio id="remote" autoplay></audio>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-let ticketId = null, accessToken = null, socket = null, pc = null, peerSocketId = null, localStream = null, currentStatus = 'waiting', rated = false;
+let tid=null,tok=null,sock=null,pc=null,peer=null,local=null,rated=false;
+const S=localStorage.getItem('support_ticket');
+if(S){try{const d=JSON.parse(S);tid=d.id;tok=d.token}catch{}}
 
-const saved = localStorage.getItem('support_ticket');
-if (saved) { try { const d = JSON.parse(saved); ticketId = d.id; accessToken = d.token; } catch {} }
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function tm(iso){if(!iso)return'';try{return new Date(iso+(iso.includes('Z')?'':'Z')).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}catch{return''}}
+function eta(s){if(!s||s<60)return'أقل من دقيقة';const m=Math.round(s/60);return m<60?m+' دقيقة':Math.round(m/60)+' ساعة'}
+function show(id){['form-screen','wait-screen','chat-screen'].forEach(x=>$(x).classList.toggle('on',x===id))}
 
-function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function formatTime(iso) {
-  if (!iso) return '';
-  try { return new Date(iso + (iso.includes('Z')?'':'Z')).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'}); } catch { return ''; }
-}
-function formatEta(secs) {
-  if (!secs || secs < 60) return 'أقل من دقيقة';
-  const m = Math.round(secs/60);
-  return m < 60 ? m + ' دقيقة' : Math.round(m/60) + ' ساعة';
-}
-
-document.getElementById('f-submit').onclick = async () => {
-  const name = document.getElementById('f-name').value.trim();
-  const contact = document.getElementById('f-contact').value.trim();
-  const location = document.getElementById('f-location').value;
-  const subject = document.getElementById('f-subject').value.trim();
-  const details = document.getElementById('f-details').value.trim();
-  const err = document.getElementById('f-err');
-  err.textContent = '';
-  if (!name) { err.textContent = 'الاسم مطلوب'; return; }
-  if (!subject) { err.textContent = 'اكتب ملخص المشكلة'; return; }
-  const btn = document.getElementById('f-submit');
-  btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-  try {
-    const res = await fetch('/api/tickets', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ customerName: name, customerContact: contact, subject, problemLocation: location, problemDetails: details })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'خطأ');
-    ticketId = data.id; accessToken = data.accessToken;
-    localStorage.setItem('support_ticket', JSON.stringify({ id: ticketId, token: accessToken }));
-    showStatus(data); connectSocket();
-  } catch (e) { err.textContent = e.message || 'تعذر الإرسال'; }
-  finally { btn.disabled = false; btn.textContent = 'إرسال الطلب'; }
+$('f-go').onclick=async()=>{
+  const name=$('f-name').value.trim(),contact=$('f-contact').value.trim(),loc=$('f-loc').value,
+    sub=$('f-sub').value.trim(),det=$('f-det').value.trim();
+  $('f-err').textContent='';
+  if(!name)return $('f-err').textContent='الاسم مطلوب';
+  if(!sub)return $('f-err').textContent='اكتب ملخص المشكلة';
+  $('f-go').disabled=true;$('f-go').textContent='جاري الإرسال...';
+  try{
+    const r=await fetch('/api/tickets',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({customerName:name,customerContact:contact,subject:sub,problemLocation:loc,problemDetails:det})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'خطأ');
+    tid=d.id;tok=d.accessToken;localStorage.setItem('support_ticket',JSON.stringify({id:tid,token:tok}));
+    goWait(d);connect();
+  }catch(e){$('f-err').textContent=e.message||'تعذر الإرسال'}
+  finally{$('f-go').disabled=false;$('f-go').textContent='إرسال الطلب'}
 };
 
-function showStatus(data) {
-  document.getElementById('form-screen').style.display = 'none';
-  document.getElementById('status-screen').style.display = 'block';
-  document.getElementById('chat-screen').classList.remove('active');
-  currentStatus = data.status;
-  updateStatusUI(data);
-  const music = document.getElementById('hold-music');
-  music.volume = 0.25; music.play().catch(()=>{});
+function goWait(d){
+  show('wait-screen');
+  if(d.status==='active')return goChat(d);
+  if(d.status==='closed')return goClosed(d);
+  $('w-icon').textContent='⏳';$('w-title').textContent='طلبك قيد الانتظار';
+  $('w-desc').textContent='سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.';
+  $('w-q').style.display='flex';
+  $('w-pos').textContent=d.position||'—';$('w-eta').textContent=eta(d.etaSeconds);
+  const m=$('music');m.volume=.22;m.play().catch(()=>{});
+}
+function goChat(d){
+  $('music').pause();show('chat-screen');
+  $('c-name').textContent=d.assignedAdminName||'موظف الدعم';
+  $('c-st').textContent='متصل الآن';
+  if(d.status==='closed'){ $('c-form').style.display='none'; if(!d.rating&&!rated)rateModal(); }
+}
+function goClosed(d){
+  $('music').pause();show('wait-screen');
+  $('w-icon').textContent=d.outcome==='approved'?'✅':'📋';
+  $('w-title').textContent=d.outcome==='approved'?'تم حل طلبك':'تم إغلاق الطلب';
+  $('w-desc').textContent=d.solution||'شكراً لتواصلك معنا.';
+  $('w-q').style.display='none';
+  if(!d.rating&&!rated)rateModal();
 }
 
-function updateStatusUI(data) {
-  const icon = document.getElementById('status-icon');
-  const title = document.getElementById('status-title');
-  const desc = document.getElementById('status-desc');
-  const qInfo = document.getElementById('queue-info');
-  if (data.status === 'waiting') {
-    icon.textContent = '⏳';
-    title.textContent = 'طلبك قيد الانتظار';
-    desc.textContent = 'سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.';
-    qInfo.style.display = 'flex';
-    document.getElementById('q-pos').textContent = data.position || '—';
-    document.getElementById('q-eta').textContent = formatEta(data.etaSeconds);
-    document.getElementById('hold-note').textContent = 'يرجى عدم إغلاق الصفحة';
-  } else if (data.status === 'active') {
-    document.getElementById('hold-music').pause();
-    showChat(data);
-  } else if (data.status === 'closed') {
-    document.getElementById('hold-music').pause();
-    icon.textContent = data.outcome === 'approved' ? '✅' : '📋';
-    title.textContent = data.outcome === 'approved' ? 'تم حل طلبك' : 'تم إغلاق الطلب';
-    desc.textContent = data.solution || 'شكراً لتواصلك معنا.';
-    qInfo.style.display = 'none';
-    document.getElementById('hold-note').textContent = '';
-    if (!data.rating && !rated) showRatingModal();
-  }
-}
-
-function showChat(data) {
-  document.getElementById('form-screen').style.display = 'none';
-  document.getElementById('status-screen').style.display = 'none';
-  document.getElementById('chat-screen').classList.add('active');
-  document.getElementById('chat-admin-name').textContent = data.assignedAdminName || 'موظف الدعم';
-  document.getElementById('chat-status').textContent = 'متصل الآن';
-  if (data.status === 'closed') {
-    document.getElementById('chat-form').style.display = 'none';
-    if (!data.rating && !rated) showRatingModal();
-  }
-}
-
-function showRatingModal() {
-  if (document.getElementById('rating-overlay')) return;
-  const el = document.createElement('div');
-  el.id = 'rating-overlay';
-  el.className = 'rating-overlay';
-  el.innerHTML = `
-    <div class="rating-card">
-      <h3>كيف كانت تجربتك؟</h3>
-      <p>قيّم خدمة الدعم من 1 إلى 5 نجوم</p>
-      <div class="stars" id="stars">
-        <button data-v="1">⭐</button><button data-v="2">⭐</button><button data-v="3">⭐</button><button data-v="4">⭐</button><button data-v="5">⭐</button>
-      </div>
-      <div class="rating-reason" id="rating-reason">
-        <textarea id="rating-text" placeholder="ما الذي لم يعجبك؟ (مطلوب للتقييم أقل من 4)"></textarea>
-      </div>
-      <button class="primary-btn" id="rating-submit" style="display:none">إرسال التقييم</button>
-    </div>`;
+function rateModal(){
+  if($('ro'))return;
+  const el=document.createElement('div');el.id='ro';el.className='ro';
+  el.innerHTML=`<div class="rc"><h3>كيف كانت تجربتك؟</h3><p>قيّم الخدمة من 1 إلى 5</p>
+    <div class="stars" id="st">${[1,2,3,4,5].map(v=>`<button data-v="${v}">⭐</button>`).join('')}</div>
+    <div id="rr"><textarea id="rt" placeholder="ما الذي لم يعجبك؟"></textarea></div>
+    <button class="btn" id="rs" style="display:none">إرسال التقييم</button></div>`;
   document.body.appendChild(el);
-  let selected = 0;
-  el.querySelectorAll('.stars button').forEach(btn => {
-    btn.onclick = () => {
-      selected = Number(btn.dataset.v);
-      el.querySelectorAll('.stars button').forEach((b,i) => b.classList.toggle('on', i < selected));
-      document.getElementById('rating-reason').style.display = selected < 4 ? 'block' : 'none';
-      document.getElementById('rating-submit').style.display = 'block';
-    };
+  let sel=0;
+  el.querySelectorAll('#st button').forEach(b=>b.onclick=()=>{
+    sel=+b.dataset.v;
+    el.querySelectorAll('#st button').forEach((x,i)=>x.classList.toggle('on',i<sel));
+    $('rr').style.display=sel<4?'block':'none';$('rs').style.display='block';
   });
-  document.getElementById('rating-submit').onclick = async () => {
-    const reason = document.getElementById('rating-text').value.trim();
-    if (selected < 4 && !reason) { alert('يرجى كتابة السبب'); return; }
-    try {
-      const res = await fetch(`/api/tickets/${ticketId}/rate?token=${accessToken}`, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ rating: selected, reason })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      rated = true;
-      el.remove();
-      alert('شكراً لتقييمك 🌟');
-    } catch (e) { alert(e.message); }
+  $('rs').onclick=async()=>{
+    const reason=$('rt').value.trim();
+    if(sel<4&&!reason)return alert('اكتب السبب');
+    try{
+      const r=await fetch(`/api/tickets/${tid}/rate?token=${tok}`,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({rating:sel,reason})});
+      const d=await r.json();if(!r.ok)throw new Error(d.error);
+      rated=true;el.remove();alert('شكراً لتقييمك 🌟');
+    }catch(e){alert(e.message)}
   };
 }
 
-function connectSocket() {
-  if (socket) return;
-  socket = io();
-  socket.on('connect', () => { if (ticketId && accessToken) socket.emit('ticket:join', { ticketId, accessToken }); });
-  socket.on('ticket:history', (msgs) => {
-    const scroll = document.getElementById('chat-scroll');
-    scroll.innerHTML = ''; msgs.forEach(appendBubble); scroll.scrollTop = scroll.scrollHeight;
+function connect(){
+  if(sock)return;
+  sock=io();
+  sock.on('connect',()=>{if(tid&&tok)sock.emit('ticket:join',{ticketId:tid,accessToken:tok})});
+  sock.on('ticket:history',ms=>{const s=$('scroll');s.innerHTML='';ms.forEach(bub);s.scrollTop=s.scrollHeight});
+  sock.on('ticket:message',m=>{bub(m);const s=$('scroll');s.scrollTop=s.scrollHeight});
+  sock.on('ticket:typing',({text})=>{$('typing').textContent=text?'🖊️ الموظف يكتب...':''});
+  sock.on('ticket:status',d=>{
+    if(!d?.status)return;
+    if(d.status==='active'){goChat(d);sock.emit('ticket:join',{ticketId:tid,accessToken:tok})}
+    else if(d.status==='closed'){
+      $('music').pause();
+      if($('chat-screen').classList.contains('on')){$('c-form').style.display='none';if(!d.rating&&!rated)rateModal()}
+      else goClosed(d);
+    }else goWait(d);
   });
-  socket.on('ticket:message', (m) => {
-    appendBubble(m);
-    const scroll = document.getElementById('chat-scroll');
-    scroll.scrollTop = scroll.scrollHeight;
+  sock.on('rtc:offer',async({fromSocketId,sdp})=>{
+    peer=fromSocketId;await ensure();await pc.setRemoteDescription(sdp);
+    const a=await pc.createAnswer();await pc.setLocalDescription(a);
+    sock.emit('rtc:answer',{toSocketId:fromSocketId,sdp:a});$('c-call').classList.add('on');
   });
-  socket.on('ticket:typing', ({ text }) => {
-    document.getElementById('chat-typing').textContent = text ? '🖊️ الموظف يكتب...' : '';
-  });
-  socket.on('ticket:status', (data) => {
-    if (!data || !data.status) return;
-    currentStatus = data.status;
-    if (data.status === 'active') { showChat(data); socket.emit('ticket:join', { ticketId, accessToken }); }
-    else if (data.status === 'closed') {
-      document.getElementById('hold-music').pause();
-      if (document.getElementById('chat-screen').classList.contains('active')) {
-        document.getElementById('chat-form').style.display = 'none';
-        if (!data.rating && !rated) showRatingModal();
-      } else updateStatusUI(data);
-    } else updateStatusUI(data);
-  });
-  socket.on('rtc:offer', async ({ fromSocketId, sdp }) => {
-    peerSocketId = fromSocketId; await ensurePC();
-    await pc.setRemoteDescription(sdp);
-    const answer = await pc.createAnswer(); await pc.setLocalDescription(answer);
-    socket.emit('rtc:answer', { toSocketId: fromSocketId, sdp: answer });
-    document.getElementById('btn-call').classList.add('active');
-  });
-  socket.on('rtc:answer', async ({ sdp }) => { await pc?.setRemoteDescription(sdp); });
-  socket.on('rtc:ice', async ({ candidate }) => { try { await pc?.addIceCandidate(candidate); } catch {} });
-  socket.on('rtc:call-end', endCall);
+  sock.on('rtc:answer',async({sdp})=>{await pc?.setRemoteDescription(sdp)});
+  sock.on('rtc:ice',async({candidate})=>{try{await pc?.addIceCandidate(candidate)}catch{}});
+  sock.on('rtc:call-end',endCall);
 }
 
-function renderContentWithLinks(text) {
-  if (!text) return '';
-  const urlRegex = /(https?:\/\/[^\s<]+)/g;
-  return text.split(urlRegex).map(part => {
-    if (/^https?:\/\//.test(part)) {
-      const lower = part.toLowerCase();
-      let cls='generic', icon='🔗', label='فتح الرابط';
-      if (lower.includes('discord')) { cls='discord'; icon='💬'; label='انضم لديسكورد'; }
-      else if (lower.includes('wa.me')||lower.includes('whatsapp')) { cls='whatsapp'; icon='🟢'; label='واتساب'; }
-      else if (lower.includes('t.me')||lower.includes('telegram')) { cls='telegram'; icon='✈️'; label='تيليجرام'; }
-      else if (lower.includes('instagram')||lower.includes('instagr.am')) { cls='instagram'; icon='📷'; label='إنستقرام'; }
-      else if (lower.includes('twitter.com')||lower.includes('x.com')) { cls='x'; icon='𝕏'; label='تويتر / X'; }
-      else if (lower.includes('youtube')||lower.includes('youtu.be')) { cls='youtube'; icon='▶️'; label='يوتيوب'; }
-      else if (lower.includes('tiktok')) { cls='tiktok'; icon='🎵'; label='تيك توك'; }
-      else if (lower.includes('snapchat')) { cls='snapchat'; icon='👻'; label='سناب شات'; }
-      else if (lower.includes('facebook')||lower.includes('fb.com')||lower.includes('fb.me')) { cls='facebook'; icon='👤'; label='فيسبوك'; }
-      return `<a href="${escapeHtml(part)}" target="_blank" rel="noopener" class="link-btn ${cls}"><span>${icon}</span> ${label}</a>`;
-    }
-    return escapeHtml(part).replace(/\n/g,'<br>');
+function links(t){
+  if(!t)return'';
+  return t.split(/(https?:\/\/[^\s<]+)/g).map(p=>{
+    if(!/^https?:\/\//.test(p))return esc(p).replace(/\n/g,'<br>');
+    const l=p.toLowerCase();let c='generic',i='🔗',lab='فتح الرابط';
+    if(l.includes('discord')){c='discord';i='💬';lab='ديسكورد'}
+    else if(l.includes('wa.me')||l.includes('whatsapp')){c='whatsapp';i='🟢';lab='واتساب'}
+    else if(l.includes('t.me')||l.includes('telegram')){c='telegram';i='✈️';lab='تيليجرام'}
+    else if(l.includes('instagram')||l.includes('instagr.am')){c='instagram';i='📷';lab='إنستقرام'}
+    else if(l.includes('twitter.com')||l.includes('x.com')){c='x';i='𝕏';lab='X'}
+    else if(l.includes('youtube')||l.includes('youtu.be')){c='youtube';i='▶️';lab='يوتيوب'}
+    else if(l.includes('tiktok')){c='tiktok';i='🎵';lab='تيك توك'}
+    else if(l.includes('snapchat')){c='snapchat';i='👻';lab='سناب'}
+    else if(l.includes('facebook')||l.includes('fb.')){c='facebook';i='👤';lab='فيسبوك'}
+    return `<a class="link-btn ${c}" href="${esc(p)}" target="_blank" rel="noopener">${i} ${lab}</a>`;
   }).join('');
 }
-
-function appendBubble(m) {
-  const scroll = document.getElementById('chat-scroll');
-  if (!scroll) return;
-  const row = document.createElement('div');
-  let cls = 'system';
-  if (m.sender_type === 'customer') cls = 'mine';
-  else if (m.sender_type === 'admin') cls = 'theirs';
-  row.className = 'bubble-row ' + cls;
-  let media = '';
-  if (m.attachment_url) {
-    if (m.attachment_type === 'image') media = `<img src="${m.attachment_url}">`;
-    else if (m.attachment_type === 'video') media = `<video src="${m.attachment_url}" controls></video>`;
-    else if (m.attachment_type === 'audio') media = `<audio src="${m.attachment_url}" controls></audio>`;
+function bub(m){
+  const s=$('scroll');if(!s)return;
+  const r=document.createElement('div');
+  let cls='sys';if(m.sender_type==='customer')cls='me';else if(m.sender_type==='admin')cls='them';
+  r.className='row '+cls;
+  let media='';
+  if(m.attachment_url){
+    if(m.attachment_type==='image')media=`<img src="${m.attachment_url}">`;
+    else if(m.attachment_type==='video')media=`<video src="${m.attachment_url}" controls></video>`;
+    else if(m.attachment_type==='audio')media=`<audio src="${m.attachment_url}" controls></audio>`;
   }
-  row.innerHTML = `<div class="bubble">${m.content?renderContentWithLinks(m.content):''}${media}<div class="time">${formatTime(m.created_at)}</div></div>`;
-  scroll.appendChild(row);
+  r.innerHTML=`<div class="bub">${m.content?links(m.content):''}${media}<div class="tm">${tm(m.created_at)}</div></div>`;
+  s.appendChild(r);
 }
 
-document.getElementById('chat-form').onsubmit = (e) => {
-  e.preventDefault();
-  const input = document.getElementById('chat-input');
-  const content = input.value.trim();
-  if (!content || !ticketId) return;
-  socket.emit('ticket:message', { ticketId, content });
-  input.value = ''; input.style.height = 'auto';
+$('c-form').onsubmit=e=>{
+  e.preventDefault();const v=$('c-in').value.trim();if(!v||!tid)return;
+  sock.emit('ticket:message',{ticketId:tid,content:v});$('c-in').value='';$('c-in').style.height='auto';
 };
-document.getElementById('chat-input').oninput = function() {
-  this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight,120)+'px';
-  if (socket && ticketId) socket.emit('ticket:typing', { ticketId, text: this.value.slice(0,60) });
+$('c-in').oninput=function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';
+  if(sock&&tid)sock.emit('ticket:typing',{ticketId:tid,text:this.value.slice(0,50)})};
+$('c-in').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('c-form').requestSubmit()}};
+$('c-att').onclick=()=>{
+  const i=document.createElement('input');i.type='file';i.accept='image/*,video/*,audio/*';
+  i.onchange=async()=>{if(!i.files[0]||!tid)return;const fd=new FormData();fd.append('file',i.files[0]);
+    try{const r=await fetch(`/api/upload?ticketId=${tid}&token=${tok}`,{method:'POST',body:fd});const d=await r.json();
+      if(!r.ok)throw new Error(d.error);sock.emit('ticket:message',{ticketId:tid,content:'',attachmentUrl:d.url,attachmentType:d.type})}
+    catch(e){alert(e.message)}};i.click();
 };
-document.getElementById('chat-input').onkeydown = (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('chat-form').requestSubmit(); }
-};
-document.getElementById('btn-attach').onclick = () => {
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*,video/*,audio/*';
-  inp.onchange = async () => {
-    if (!inp.files[0]||!ticketId) return;
-    const fd = new FormData(); fd.append('file', inp.files[0]);
-    try {
-      const res = await fetch(`/api/upload?ticketId=${ticketId}&token=${accessToken}`, { method:'POST', body:fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      socket.emit('ticket:message', { ticketId, content:'', attachmentUrl:data.url, attachmentType:data.type });
-    } catch(e) { alert(e.message); }
-  };
-  inp.click();
-};
-document.getElementById('btn-call').onclick = async () => {
-  if (pc) { endCall(); return; }
-  document.getElementById('btn-call').classList.add('active');
-  await ensurePC();
-  const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
-  socket.emit('rtc:call-request', { ticketId });
-};
-async function ensurePC() {
-  if (pc) return pc;
-  pc = new RTCPeerConnection({ iceServers: [
-    { urls:'stun:stun.l.google.com:19302' },
-    { urls:'turn:openrelay.metered.ca:80', username:'openrelayproject', credential:'openrelayproject' },
-    { urls:'turn:openrelay.metered.ca:443', username:'openrelayproject', credential:'openrelayproject' }
-  ]});
-  localStream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
-  pc.ontrack = (e) => { document.getElementById('remote-audio').srcObject = e.streams[0]; };
-  pc.onicecandidate = (e) => { if (e.candidate && peerSocketId) socket.emit('rtc:ice', { toSocketId:peerSocketId, candidate:e.candidate }); };
+$('c-call').onclick=async()=>{if(pc)return endCall();$('c-call').classList.add('on');await ensure();
+  const o=await pc.createOffer();await pc.setLocalDescription(o);sock.emit('rtc:call-request',{ticketId:tid})};
+async function ensure(){
+  if(pc)return pc;
+  pc=new RTCPeerConnection({iceServers:[
+    {urls:'stun:stun.l.google.com:19302'},
+    {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'}]});
+  local=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+  local.getTracks().forEach(t=>pc.addTrack(t,local));
+  pc.ontrack=e=>{$('remote').srcObject=e.streams[0]};
+  pc.onicecandidate=e=>{if(e.candidate&&peer)sock.emit('rtc:ice',{toSocketId:peer,candidate:e.candidate})};
   return pc;
 }
-function endCall() {
-  if (pc) { pc.close(); pc=null; }
-  if (localStream) { localStream.getTracks().forEach(t=>t.stop()); localStream=null; }
-  document.getElementById('btn-call').classList.remove('active');
-  if (ticketId) socket?.emit('rtc:call-end', { ticketId });
-  peerSocketId = null;
-}
+function endCall(){if(pc){pc.close();pc=null}if(local){local.getTracks().forEach(t=>t.stop());local=null}
+  $('c-call').classList.remove('on');if(tid)sock?.emit('rtc:call-end',{ticketId:tid});peer=null}
 
-if (ticketId && accessToken) {
-  fetch(`/api/tickets/${ticketId}/status?token=${accessToken}`).then(r=>r.json()).then(data => {
-    if (data.error) { localStorage.removeItem('support_ticket'); return; }
-    if (data.status === 'waiting') { showStatus(data); connectSocket(); }
-    else { showChat(data); connectSocket(); }
+if(tid&&tok){
+  fetch(`/api/tickets/${tid}/status?token=${tok}`).then(r=>r.json()).then(d=>{
+    if(d.error){localStorage.removeItem('support_ticket');return}
+    if(d.status==='waiting'){goWait(d);connect()}
+    else if(d.status==='active'){goChat(d);connect()}
+    else goClosed(d);
   }).catch(()=>{});
 }
 </script>

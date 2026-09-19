@@ -52,7 +52,30 @@ CREATE TABLE IF NOT EXISTS messages (
   attachment_type TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS canned_replies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  created_by INTEGER,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 `);
+
+// Seed default canned replies if empty
+const cannedCount = db.prepare('SELECT COUNT(*) AS c FROM canned_replies').get().c;
+if (cannedCount === 0) {
+  const ins = db.prepare('INSERT INTO canned_replies (title, content) VALUES (?, ?)');
+  [
+    ['ترحيب', 'مرحباً بك في ناقة 🌟 كيف أقدر أخدمك؟'],
+    ['انتظار', 'الرجاء الانتظار قليلاً، سأكون معك خلال لحظات 🙏'],
+    ['طلب تفاصيل', 'ممكن تعطيني تفاصيل أكثر عن المشكلة؟ ومتى بدأت؟'],
+    ['طلب صورة', 'لو تقدر ترسل صورة أو لقطة شاشة للمشكلة يساعدني كثير 📎'],
+    ['تم الحل', 'تم حل المشكلة. هل في أي شيء ثاني أقدر أساعدك فيه؟'],
+    ['شكر', 'شكراً لتواصلك معنا، سعداء بخدمتك 💜'],
+  ].forEach(([t, body]) => ins.run(t, body));
+}
+
 
 // Migrations for existing DBs
 try { db.exec('ALTER TABLE tickets ADD COLUMN problem_location TEXT'); } catch {}
@@ -142,6 +165,11 @@ const stmts = {
   ),
   deleteTicket: db.prepare('DELETE FROM tickets WHERE id = ?'),
   deleteMessages: db.prepare('DELETE FROM messages WHERE ticket_id = ?'),
+
+  listCanned: db.prepare('SELECT * FROM canned_replies ORDER BY id'),
+  insertCanned: db.prepare('INSERT INTO canned_replies (title, content, created_by) VALUES (?, ?, ?)'),
+  deleteCanned: db.prepare('DELETE FROM canned_replies WHERE id = ?'),
+  updateCanned: db.prepare('UPDATE canned_replies SET title = ?, content = ? WHERE id = ?'),
 };
 
 function closeDb() {

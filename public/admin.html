@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الدعم الفني</title>
+<title>ناقه — لوحة الإدارة</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -611,13 +611,26 @@ input, textarea, select { font-family: inherit; }
 .link-btn.facebook { background: #1877F2; }
 .link-btn.generic { background: var(--purple-dim); border: 1px solid var(--purple); }
 
+
+@media (max-width: 900px) {
+  body::before {
+    content: 'لوحة الإدارة تعمل على الكمبيوتر فقط — افتح الموقع من جهاز كمبيوتر';
+    position: fixed; inset: 0; z-index: 99999;
+    background: #0c0c12; color: #c4b5fd;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 32px; font-size: 16px; font-weight: 700;
+    font-family: Cairo, system-ui, sans-serif; line-height: 1.7;
+  }
+  #login-screen, #dash { display: none !important; }
+}
+
 </style>
 </head>
 <body>
 
 <div id="login-screen">
   <div class="login-card">
-    <h1>لوحة الدعم الفني</h1>
+    <h1>ناقه — لوحة الإدارة</h1>
     <p>تسجيل دخول الموظفين والإدارة</p>
     <div class="field">
       <label>البريد الإلكتروني</label>
@@ -634,13 +647,15 @@ input, textarea, select { font-family: inherit; }
 
 <div id="dash">
   <nav id="nav">
-    <div class="brand"><span>🎧</span> الدعم الفني</div>
+    <div class="brand"><img src="/logo.png" alt="" style="width:32px;height:32px;border-radius:10px;object-fit:contain;background:linear-gradient(135deg,var(--purple),var(--purple-dim));padding:2px"> ناقه</div>
     <button class="nav-btn active" data-tab="queue">الطابور <span class="nav-badge hidden" id="badge-queue">0</span></button>
     <button class="nav-btn" data-tab="active">نشط الآن</button>
     <button class="nav-btn" data-tab="archive">الأرشيف</button>
     <button class="nav-btn" data-tab="stats">الإحصائيات</button>
     <button class="nav-btn hidden" data-tab="employees" id="nav-employees">الموظفون</button>
     <button class="nav-btn hidden" data-tab="reviews" id="nav-reviews">التقييمات</button>
+    <button class="nav-btn" data-tab="canned">الردود الجاهزة</button>
+    <button class="nav-btn" data-tab="board">السبورة والاجتماع</button>
     <div class="spacer"></div>
     <div class="me">مسجل كـ <b id="me-name">—</b></div>
     <button id="logout-btn">خروج</button>
@@ -827,6 +842,8 @@ function renderTab() {
   if (currentTab === 'stats') return renderStatsTab(c);
   if (currentTab === 'employees') return renderEmployeesTab(c);
   if (currentTab === 'reviews') return renderReviewsTab(c);
+  if (currentTab === 'canned') return renderCannedTab(c);
+  if (currentTab === 'board') { location.href = '/whiteboard.html'; return; }
 }
 
 async function renderQueueTab(c) {
@@ -995,7 +1012,20 @@ async function renderReviewsTab(c) {
     </div>`;
   document.getElementById('btn-print-reviews').onclick = () => {
     const w = window.open('', '_blank');
-    w.document.write('<html dir="rtl"><head><title>التقييمات</title><style>body{font-family:sans-serif;padding:20px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #ccc;padding:8px;text-align:right}</style></head><body>');
+    w.document.write('<html dir="rtl"><head><title>التقييمات</title><style>body{font-family:sans-serif;padding:20px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #ccc;padding:8px;text-align:right}
+@media (max-width: 900px) {
+  body::before {
+    content: 'لوحة الإدارة تعمل على الكمبيوتر فقط — افتح الموقع من جهاز كمبيوتر';
+    position: fixed; inset: 0; z-index: 99999;
+    background: #0c0c12; color: #c4b5fd;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 32px; font-size: 16px; font-weight: 700;
+    font-family: Cairo, system-ui, sans-serif; line-height: 1.7;
+  }
+  #login-screen, #dash { display: none !important; }
+}
+
+</style></head><body>');
     w.document.write('<h1>تقييمات الدعم الفني</h1><table><tr><th>#</th><th>العميل</th><th>الموظف</th><th>التقييم</th><th>السبب</th></tr>');
     list.forEach(r => {
       w.document.write(`<tr><td>${r.id}</td><td>${escapeHtml(r.customer_name)}</td><td>${escapeHtml(r.assigned_admin_name||'')}</td><td>${r.rating}</td><td>${escapeHtml(r.rating_reason||'')}</td></tr>`);
@@ -1017,6 +1047,35 @@ async function renderReviewsTab(c) {
     };
   });
 }
+
+
+
+async function renderCannedTab(c) {
+  const rows = await api('/api/admin/canned');
+  c.innerHTML = `<div class="page-title">الردود الجاهزة</div>
+    <div class="emp-form" style="grid-template-columns:1fr 2fr auto">
+      <input id="can-title" placeholder="عنوان الزر">
+      <input id="can-body" placeholder="نص الرسالة">
+      <button class="primary-btn" id="can-add" style="width:auto;padding:11px 18px">إضافة</button>
+    </div>
+    <div id="can-list">${rows.map(r=>`
+      <div class="ticket-row" style="cursor:default">
+        <div class="main"><div class="name">${escapeHtml(r.title)}</div><div class="subject">${escapeHtml(r.content)}</div></div>
+        <button class="tiny-btn can-del" data-id="${r.id}" style="color:var(--red);border-color:rgba(239,68,68,.3)">حذف</button>
+      </div>`).join('')||'<div class="empty-note">لا توجد ردود بعد</div>'}</div>`;
+  document.getElementById('can-add').onclick = async () => {
+    try {
+      await api('/api/admin/canned', { method:'POST', body: JSON.stringify({ title: $('can-title').value.trim(), content: $('can-body').value.trim() }) });
+      toast('تمت الإضافة'); renderCannedTab(c);
+    } catch(e) { toast(e.message); }
+  };
+  c.querySelectorAll('.can-del').forEach(b => b.onclick = async () => {
+    if (!confirm('حذف؟')) return;
+    await api('/api/admin/canned/'+b.dataset.id, { method:'DELETE' });
+    renderCannedTab(c);
+  });
+}
+function $(id){ return document.getElementById(id); }
 
 
 async function openTicket(id) {
@@ -1047,11 +1106,16 @@ async function openTicket(id) {
       </div>
       <div id="tm-chat-scroll"></div>
       <div id="tm-typing"></div>
+      <div id="canned-btns" style="padding:8px 16px 0;display:flex;flex-wrap:wrap;gap:6px"></div>
       <div class="cmd-hint">
         <span data-cmd="/auto">/auto</span>
         <span data-cmd="/wait">/wait</span>
-        <span data-cmd="/close approved">/close approved</span>
-        <span data-cmd="/close rejected">/close rejected</span>
+        <span data-cmd="/hello">/hello</span>
+        <span data-cmd="/ask">/ask</span>
+        <span data-cmd="/files">/files</span>
+        <span data-cmd="/thanks">/thanks</span>
+        <span data-cmd="/close approved">/close ok</span>
+        <span data-cmd="/close rejected">/close no</span>
         <span data-cmd="/help">/help</span>
       </div>
       <form id="tm-chat-form">
@@ -1146,6 +1210,23 @@ async function openTicket(id) {
   };
 
   // Send message
+  
+  // load canned reply buttons
+  (async () => {
+    try {
+      const cans = await api('/api/admin/canned');
+      const wrap = document.getElementById('canned-btns');
+      if (wrap && cans.length) {
+        wrap.innerHTML = cans.map(r => `<button type="button" class="tiny-btn can-send" data-body="${escapeHtml(r.content).replace(/"/g,'&quot;')}" style="background:rgba(168,85,247,.12);border-color:var(--purple);color:var(--purple-2);font-size:12px">${escapeHtml(r.title)}</button>`).join('');
+        wrap.querySelectorAll('.can-send').forEach(btn => {
+          btn.onclick = () => {
+            socket.emit('ticket:message', { ticketId: id, content: btn.getAttribute('data-body') });
+          };
+        });
+      }
+    } catch {}
+  })();
+
   const form = document.getElementById('tm-chat-form');
   const input = document.getElementById('tm-chat-input');
   form.onsubmit = (e) => {

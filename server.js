@@ -33,6 +33,13 @@ const upload = multer({
 const adminSessions = new Map();
 const autoModeTickets = new Set();
 
+// ---------- Whiteboard + voice room state ----------
+const boardStrokes = [];
+const boardPeers = new Set();
+const voicePeers = new Set();
+
+
+
 function getAdminById(id) { return stmts.getAdminById.get(id); }
 function publicAdmin(a) { return { id: a.id, email: a.email, name: a.name, role: a.role }; }
 
@@ -309,6 +316,28 @@ app.delete('/api/admin/tickets/:id', requireAdminAuth, requireOwner, (req, res) 
   res.json({ ok: true });
 });
 
+
+// ---------- CANNED REPLIES ----------
+app.get('/api/admin/canned', requireAdminAuth, (req, res) => {
+  res.json(stmts.listCanned.all());
+});
+app.post('/api/admin/canned', requireAdminAuth, (req, res) => {
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ error: 'العنوان والنص مطلوبان' });
+  const info = stmts.insertCanned.run(title.trim(), content.trim(), req.admin.id);
+  res.json(stmts.listCanned.all().find(r => r.id === Number(info.lastInsertRowid)) || { id: info.lastInsertRowid, title, content });
+});
+app.put('/api/admin/canned/:id', requireAdminAuth, (req, res) => {
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ error: 'العنوان والنص مطلوبان' });
+  stmts.updateCanned.run(title.trim(), content.trim(), req.params.id);
+  res.json({ ok: true });
+});
+app.delete('/api/admin/canned/:id', requireAdminAuth, (req, res) => {
+  stmts.deleteCanned.run(req.params.id);
+  res.json({ ok: true });
+});
+
 // ---------- SOCKET ----------
 io.use((socket, next) => {
   const adminToken = socket.handshake.auth?.adminToken;
@@ -383,12 +412,30 @@ io.on('connection', (socket) => {
 /wait — رسالة انتظار
 /thanks — رسالة شكر
 /busy — مشغول حالياً
+/hello — ترحيب
+/ask — اطلب تفاصيل أكثر
+/files — اطلب مرفقات
+/escalate — تصعيد للمالك
 /close approved — إغلاق موافقة
 /close rejected — إغلاق رفض
 /help — هذه القائمة`;
         const sys = stmts.insertSystemMessage.run(ticketId, help);
         io.to('ticket:' + ticketId).emit('ticket:message', stmts.getMessageById.get(sys.lastInsertRowid));
         return;
+      }
+      if (cmd === '/hello' || cmd === '/مرحبا') {
+        finalContent = `مرحباً بك 🌟 أنا ${socket.admin.name} من فريق الدعم، كيف أقدر أخدمك؟`;
+      }
+      if (cmd === '/ask' || cmd === '/تفاصيل') {
+        finalContent = 'ممكن تعطيني تفاصيل أكثر عن المشكلة؟ ومتى بدأت بالضبط؟';
+      }
+      if (cmd === '/files' || cmd === '/مرفقات') {
+        finalContent = 'لو تقدر ترسل صورة أو لقطة شاشة للمشكلة يساعدني كثير 📎';
+      }
+      if (cmd === '/escalate' || cmd === '/تصعيد') {
+        finalContent = 'تم تصعيد طلبك للمالك، سيتم متابعته في أقرب وقت.';
+        const sys = stmts.insertSystemMessage.run(ticketId, '⬆️ تم تصعيد الطلب للمالك من قبل ' + socket.admin.name);
+        io.to('ticket:' + ticketId).emit('ticket:message', stmts.getMessageById.get(sys.lastInsertRowid));
       }
       if (cmd.startsWith('/close approved') || cmd === '/close ok') {
         const solution = finalContent.replace(/^\/close\s+(approved|ok)\s*/i, '').trim() || 'تم حل المشكلة';
@@ -440,6 +487,54 @@ io.on('connection', (socket) => {
     }
   });
 
+
+  // Whiteboard
+  socket.on('board:join', () => {
+    if (!socket.admin) return;
+    boardPeers.add(socket.id);
+    socket.join('board');
+    socket.emit('board:state', boardStrokes);
+    io.to('board').emit('board:peers', [...boardPeers]);
+  });
+  socket.on('board:stroke', (stroke) => {
+    if (!socket.admin) return;
+    boardStrokes.push(stroke);
+    if (boardStrokes.length > 5000) boardStrokes.splice(0, boardStrokes.length - 4000);
+    socket.to('board').emit('board:stroke', stroke);
+  });
+  socket.on('board:clear', () => {
+    if (!socket.admin) return;
+    boardStrokes.length = 0;
+    io.to('board').emit('board:clear');
+  });
+  // Voice room
+  socket.on('voice:join', () => {
+    if (!socket.admin) return;
+    voicePeers.add(socket.id);
+    socket.join('voice');
+    const others = [...voicePeers].filter(id => id !== socket.id);
+    socket.emit('voice:peers', others);
+    socket.to('voice').emit('voice:peers', [socket.id]);
+  });
+  socket.on('voice:leave', () => {
+    voicePeers.delete(socket.id);
+    socket.to('voice').emit('voice:left', socket.id);
+  });
+  socket.on('voice:offer', ({ to, sdp }) => io.to(to).emit('voice:offer', { from: socket.id, sdp }));
+  socket.on('voice:answer', ({ to, sdp }) => io.to(to).emit('voice:answer', { from: socket.id, sdp }));
+  socket.on('voice:ice', ({ to, candidate }) => io.to(to).emit('voice:ice', { from: socket.id, candidate }));
+
+  socket.on('disconnect', () => {
+    if (boardPeers.has(socket.id)) {
+      boardPeers.delete(socket.id);
+      io.to('board').emit('board:peers', [...boardPeers]);
+    }
+    if (voicePeers.has(socket.id)) {
+      voicePeers.delete(socket.id);
+      socket.to('voice').emit('voice:left', socket.id);
+    }
+  });
+
   socket.on('rtc:offer', ({ toSocketId, sdp }) => io.to(toSocketId).emit('rtc:offer', { fromSocketId: socket.id, sdp }));
   socket.on('rtc:answer', ({ toSocketId, sdp }) => io.to(toSocketId).emit('rtc:answer', { fromSocketId: socket.id, sdp }));
   socket.on('rtc:ice', ({ toSocketId, candidate }) => io.to(toSocketId).emit('rtc:ice', { fromSocketId: socket.id, candidate }));
@@ -451,7 +546,7 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log('Support desk running on', PORT);
+  console.log('ناقه — Support desk running on', PORT);
 });
 
 function shutdown() {

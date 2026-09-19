@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ناقه — السبورة والاجتماع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070c;--card:#100f18;--line:#2a2840;--p:#a855f7;--p2:#c084fc;--pd:#6b21a8;--glow:rgba(168,85,247,.3);--t0:#f5f3ff;--t2:#8b7cb3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Cairo,system-ui,sans-serif;background:var(--bg);color:var(--t0);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line)}
+header img{width:36px;height:36px;border-radius:10px;object-fit:contain;background:linear-gradient(135deg,var(--p),var(--pd));padding:3px}
+header h1{font-size:16px;font-weight:800}
+header .sp{flex:1}
+.btn{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--t0);font-family:inherit;cursor:pointer;font-size:13px;font-weight:600}
+.btn:hover{border-color:var(--p)}
+.btn.p{background:linear-gradient(135deg,var(--p2),var(--p));color:#1a052e;border:none}
+.btn.danger{border-color:rgba(244,63,94,.5);color:#f43f5e}
+.tools{display:flex;gap:8px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.tools label{font-size:12px;color:var(--t2)}
+.tools input[type=color]{width:36px;height:28px;border:none;background:none;cursor:pointer}
+.tools input[type=range]{width:90px}
+#stage{flex:1;position:relative;background:#0a0a10;cursor:crosshair}
+canvas{display:block;width:100%;height:100%}
+#status{font-size:12px;color:var(--t2);padding:0 8px}
+#peers{font-size:12px;color:var(--p2)}
+.voice-bar{display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--card);border-top:1px solid var(--line)}
+@media(max-width:700px){body::after{content:'السبورة أفضل على شاشة كبيرة';position:fixed;bottom:8px;left:8px;right:8px;text-align:center;font-size:11px;color:var(--t2);pointer-events:none}}
+</style>
+</head>
+<body>
+<header>
+  <img src="/logo.png" alt="ناقه">
+  <h1>ناقه — السبورة والاجتماع</h1>
+  <span id="status">غير متصل</span>
+  <span id="peers"></span>
+  <div class="sp"></div>
+  <a class="btn" href="/admin.html">← لوحة الإدارة</a>
+</header>
+<div class="tools">
+  <button class="btn" data-tool="pen" id="t-pen">✏️ قلم</button>
+  <button class="btn" data-tool="eraser" id="t-er">🧹 ممحاة</button>
+  <label>اللون <input type="color" id="color" value="#a855f7"></label>
+  <label>الحجم <input type="range" id="size" min="1" max="40" value="3"></label>
+  <button class="btn" id="t-clear">مسح الكل</button>
+  <button class="btn p" id="t-voice">🎤 دخول المكالمة</button>
+  <button class="btn danger" id="t-leave" style="display:none">إنهاء الصوت</button>
+</div>
+<div id="stage"><canvas id="c"></canvas></div>
+<div class="voice-bar">
+  <span style="font-size:12px;color:var(--t2)">الغرفة: اجتماع ناقه — أي أدمن يدخل يرى السبورة ويشارك الصوت</span>
+</div>
+<audio id="remote-mix" autoplay></audio>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const token = localStorage.getItem('support_admin_token');
+if (!token) location.href = '/admin.html';
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let tool = 'pen', drawing = false, last = null;
+let color = '#a855f7', size = 3;
+const peers = new Map(); // socketId -> RTCPeerConnection
+let localStream = null;
+let inVoice = false;
+
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  const img = ctx.getImageData(0, 0, canvas.width || 1, canvas.height || 1);
+  canvas.width = r.width; canvas.height = r.height;
+  ctx.fillStyle = '#0a0a10'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  try { ctx.putImageData(img, 0, 0); } catch {}
+}
+window.addEventListener('resize', resize);
+resize();
+
+const socket = io({ auth: { adminToken: token } });
+socket.on('connect', () => {
+  document.getElementById('status').textContent = 'متصل';
+  socket.emit('board:join');
+});
+socket.on('disconnect', () => { document.getElementById('status').textContent = 'منقطع'; });
+
+socket.on('board:state', (strokes) => {
+  ctx.fillStyle = '#0a0a10'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  (strokes || []).forEach(drawStroke);
+});
+socket.on('board:stroke', drawStroke);
+socket.on('board:clear', () => {
+  ctx.fillStyle = '#0a0a10'; ctx.fillRect(0,0,canvas.width,canvas.height);
+});
+socket.on('board:peers', (list) => {
+  document.getElementById('peers').textContent = list.length ? `· ${list.length} متصل` : '';
+});
+
+function drawStroke(s) {
+  if (!s || !s.points || s.points.length < 2) return;
+  ctx.strokeStyle = s.erase ? '#0a0a10' : (s.color || '#a855f7');
+  ctx.lineWidth = s.size || 3;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (s.erase) ctx.lineWidth = (s.size || 3) * 4;
+  ctx.beginPath();
+  ctx.moveTo(s.points[0].x * canvas.width, s.points[0].y * canvas.height);
+  for (let i = 1; i < s.points.length; i++) {
+    ctx.lineTo(s.points[i].x * canvas.width, s.points[i].y * canvas.height);
+  }
+  ctx.stroke();
+}
+
+function pos(e) {
+  const r = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: (t.clientX - r.left) / r.width, y: (t.clientY - r.top) / r.height };
+}
+
+let points = [];
+function start(e) { e.preventDefault(); drawing = true; points = [pos(e)]; last = points[0]; }
+function move(e) {
+  if (!drawing) return; e.preventDefault();
+  const p = pos(e);
+  points.push(p);
+  drawStroke({ points: [last, p], color, size, erase: tool === 'eraser' });
+  last = p;
+}
+function end(e) {
+  if (!drawing) return; drawing = false;
+  if (points.length > 1) {
+    socket.emit('board:stroke', { points, color, size, erase: tool === 'eraser' });
+  }
+  points = []; last = null;
+}
+canvas.addEventListener('mousedown', start);
+canvas.addEventListener('mousemove', move);
+canvas.addEventListener('mouseup', end);
+canvas.addEventListener('mouseleave', end);
+canvas.addEventListener('touchstart', start, {passive:false});
+canvas.addEventListener('touchmove', move, {passive:false});
+canvas.addEventListener('touchend', end);
+
+document.getElementById('t-pen').onclick = () => { tool = 'pen'; };
+document.getElementById('t-er').onclick = () => { tool = 'eraser'; };
+document.getElementById('color').oninput = (e) => { color = e.target.value; };
+document.getElementById('size').oninput = (e) => { size = +e.target.value; };
+document.getElementById('t-clear').onclick = () => {
+  if (confirm('مسح السبورة للجميع؟')) socket.emit('board:clear');
+};
+
+// ---- Voice room (mesh WebRTC) ----
+const ice = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+  { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' }
+];
+
+async function startVoice() {
+  localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  inVoice = true;
+  document.getElementById('t-voice').style.display = 'none';
+  document.getElementById('t-leave').style.display = '';
+  socket.emit('voice:join');
+}
+function stopVoice() {
+  inVoice = false;
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  peers.forEach(pc => pc.close()); peers.clear();
+  document.getElementById('t-voice').style.display = '';
+  document.getElementById('t-leave').style.display = 'none';
+  socket.emit('voice:leave');
+}
+document.getElementById('t-voice').onclick = () => startVoice().catch(e => alert('الميكروفون: ' + e.message));
+document.getElementById('t-leave').onclick = stopVoice;
+
+async function ensurePeer(id, initiator) {
+  if (peers.has(id)) return peers.get(id);
+  const pc = new RTCPeerConnection({ iceServers: ice });
+  peers.set(id, pc);
+  if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  pc.ontrack = (e) => {
+    let a = document.getElementById('aud-' + id);
+    if (!a) { a = document.createElement('audio'); a.id = 'aud-' + id; a.autoplay = true; document.body.appendChild(a); }
+    a.srcObject = e.streams[0];
+  };
+  pc.onicecandidate = (e) => { if (e.candidate) socket.emit('voice:ice', { to: id, candidate: e.candidate }); };
+  if (initiator) {
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    socket.emit('voice:offer', { to: id, sdp: offer });
+  }
+  return pc;
+}
+
+socket.on('voice:peers', async (ids) => {
+  if (!inVoice) return;
+  for (const id of ids) {
+    if (id !== socket.id) await ensurePeer(id, true);
+  }
+});
+socket.on('voice:offer', async ({ from, sdp }) => {
+  if (!inVoice) return;
+  const pc = await ensurePeer(from, false);
+  await pc.setRemoteDescription(sdp);
+  const ans = await pc.createAnswer();
+  await pc.setLocalDescription(ans);
+  socket.emit('voice:answer', { to: from, sdp: ans });
+});
+socket.on('voice:answer', async ({ from, sdp }) => {
+  const pc = peers.get(from);
+  if (pc) await pc.setRemoteDescription(sdp);
+});
+socket.on('voice:ice', async ({ from, candidate }) => {
+  const pc = peers.get(from);
+  if (pc) try { await pc.addIceCandidate(candidate); } catch {}
+});
+socket.on('voice:left', (id) => {
+  const pc = peers.get(id);
+  if (pc) { pc.close(); peers.delete(id); }
+  const a = document.getElementById('aud-' + id);
+  if (a) a.remove();
+});
+</script>
+</body>
+</html>
