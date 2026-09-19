@@ -85,17 +85,26 @@ try { db.exec('ALTER TABLE tickets ADD COLUMN rating_reason TEXT'); } catch {}
 try { db.exec('ALTER TABLE tickets ADD COLUMN rated_at TEXT'); } catch {}
 
 const ownerRow = db.prepare('SELECT * FROM admins WHERE role = ?').get('owner');
+const OWNER_EMAIL = 'slomsalman2@gmail.com';
+const OWNER_PASS = process.env.OWNER_PASSWORD || 'asdasd1428D';
 if (!ownerRow) {
-  const hash = bcrypt.hashSync('asdasd1428D', 10);
+  const hash = bcrypt.hashSync(OWNER_PASS, 10);
   db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'owner')`)
-    .run('slomsalman2@gmail.com', hash, 'المالك');
+    .run(OWNER_EMAIL, hash, 'المالك');
+  console.log('Owner account created:', OWNER_EMAIL);
 } else {
-  db.prepare(`UPDATE admins SET email = ? WHERE role = 'owner'`).run('slomsalman2@gmail.com');
+  db.prepare(`UPDATE admins SET email = ? WHERE role = 'owner'`).run(OWNER_EMAIL);
+  // If RESET_OWNER_PASSWORD=1, reset password (useful when login breaks after redeploy)
+  if (process.env.RESET_OWNER_PASSWORD === '1') {
+    const hash = bcrypt.hashSync(OWNER_PASS, 10);
+    db.prepare(`UPDATE admins SET password_hash = ? WHERE role = 'owner'`).run(hash);
+    console.log('Owner password was reset');
+  }
 }
 
 const stmts = {
   getAdminById: db.prepare('SELECT * FROM admins WHERE id = ?'),
-  getAdminByEmail: db.prepare('SELECT * FROM admins WHERE email = ? COLLATE NOCASE'),
+  getAdminByEmail: db.prepare('SELECT * FROM admins WHERE lower(email) = lower(?)'),
   insertAdmin: db.prepare(`INSERT INTO admins (email, password_hash, name, role) VALUES (?, ?, ?, 'admin')`),
   listAdmins: db.prepare('SELECT id, email, name, role, created_at FROM admins ORDER BY id'),
   deleteAdmin: db.prepare('DELETE FROM admins WHERE id = ?'),

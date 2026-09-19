@@ -613,15 +613,12 @@ input, textarea, select { font-family: inherit; }
 
 
 @media (max-width: 900px) {
-  body::before {
-    content: 'لوحة الإدارة تعمل على الكمبيوتر فقط — افتح الموقع من جهاز كمبيوتر';
-    position: fixed; inset: 0; z-index: 99999;
-    background: #0c0c12; color: #c4b5fd;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center; padding: 32px; font-size: 16px; font-weight: 700;
-    font-family: Cairo, system-ui, sans-serif; line-height: 1.7;
+  #dash { display: none !important; }
+  body.dash-open::before {
+    content: 'لوحة الإدارة كاملة أفضل على الكمبيوتر — يمكنك تسجيل الدخول من هنا';
+    display: block; text-align: center; padding: 10px; background: #1c1c2b; color: #c4b5fd;
+    font-size: 13px; border-bottom: 1px solid #2a2a3d;
   }
-  #login-screen, #dash { display: none !important; }
 }
 
 </style>
@@ -640,7 +637,7 @@ input, textarea, select { font-family: inherit; }
       <label>كلمة المرور</label>
       <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <button class="primary-btn" id="li-submit">دخول</button>
+    <button type="button" class="primary-btn" id="li-submit">دخول</button>
     <div class="err" id="li-err"></div>
   </div>
 </div>
@@ -706,7 +703,12 @@ async function api(path, opts = {}) {
 }
 
 // Login
-document.getElementById('li-submit').onclick = async () => {
+console.log('[naqah] login script loaded');
+const liBtn = document.getElementById('li-submit');
+if (!liBtn) console.error('[naqah] li-submit missing');
+else liBtn.onclick = async () => {
+  console.log('[naqah] login click');
+
   const email = document.getElementById('li-email').value.trim();
   const password = document.getElementById('li-pass').value;
   const err = document.getElementById('li-err');
@@ -718,14 +720,17 @@ document.getElementById('li-submit').onclick = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const data = await res.json();
-    if (!res.ok) { err.textContent = data.error; return; }
+    let data = {};
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) { err.textContent = data.error || ('خطأ ' + res.status); return; }
+    if (!data.token || !data.admin) { err.textContent = 'استجابة غير صالحة من السيرفر'; return; }
     token = data.token;
     me = data.admin;
     localStorage.setItem('support_admin_token', token);
     enterDash();
   } catch (e) {
-    err.textContent = 'تعذر الاتصال بالسيرفر';
+    console.error(e);
+    err.textContent = 'تعذر الاتصال بالسيرفر — تأكد أن الموقع يعمل';
   }
 };
 document.getElementById('logout-btn').onclick = () => {
@@ -1012,20 +1017,7 @@ async function renderReviewsTab(c) {
     </div>`;
   document.getElementById('btn-print-reviews').onclick = () => {
     const w = window.open('', '_blank');
-    w.document.write('<html dir="rtl"><head><title>التقييمات</title><style>body{font-family:sans-serif;padding:20px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #ccc;padding:8px;text-align:right}
-@media (max-width: 900px) {
-  body::before {
-    content: 'لوحة الإدارة تعمل على الكمبيوتر فقط — افتح الموقع من جهاز كمبيوتر';
-    position: fixed; inset: 0; z-index: 99999;
-    background: #0c0c12; color: #c4b5fd;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center; padding: 32px; font-size: 16px; font-weight: 700;
-    font-family: Cairo, system-ui, sans-serif; line-height: 1.7;
-  }
-  #login-screen, #dash { display: none !important; }
-}
-
-</style></head><body>');
+    w.document.write('<html dir="rtl"><head><title>التقييمات</title><style>body{font-family:sans-serif;padding:20px} table{width:100%;border-collapse:collapse} td,th{border:1px solid #ccc;padding:8px;text-align:right}</style></head><body>');
     w.document.write('<h1>تقييمات الدعم الفني</h1><table><tr><th>#</th><th>العميل</th><th>الموظف</th><th>التقييم</th><th>السبب</th></tr>');
     list.forEach(r => {
       w.document.write(`<tr><td>${r.id}</td><td>${escapeHtml(r.customer_name)}</td><td>${escapeHtml(r.assigned_admin_name||'')}</td><td>${r.rating}</td><td>${escapeHtml(r.rating_reason||'')}</td></tr>`);

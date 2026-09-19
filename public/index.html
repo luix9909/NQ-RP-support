@@ -4,107 +4,192 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ناقه — الدعم الفني</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07070c; --card:#100f18; --card2:#161522; --line:#2a2840;
-  --p:#a855f7; --p2:#c084fc; --pd:#6b21a8; --glow:rgba(168,85,247,.28);
-  --t0:#f5f3ff; --t1:#c4b5fd; --t2:#8b7cb3;
-  --red:#f43f5e; --green:#34d399; --font:'Cairo',system-ui,sans-serif;
+  --bg:#05050a;
+  --bg2:#0b0a12;
+  --card:rgba(18,16,28,.82);
+  --line:rgba(168,85,247,.18);
+  --p:#b56bff;
+  --p2:#d8b4fe;
+  --pd:#6b21a8;
+  --glow:rgba(168,85,247,.35);
+  --t0:#faf5ff;
+  --t1:#ddd6fe;
+  --t2:#9b8ec4;
+  --font:'Cairo',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;}
-body{font-family:var(--font);background:var(--bg);color:var(--t0);min-height:100%;min-height:100dvh;
-  background-image:radial-gradient(ellipse 90% 50% at 50% -15%,rgba(168,85,247,.2),transparent),
-  radial-gradient(ellipse 50% 40% at 100% 100%,rgba(107,33,168,.12),transparent);}
+html,body{height:100%}
+body{
+  font-family:var(--font);color:var(--t0);min-height:100%;min-height:100dvh;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -30%,rgba(168,85,247,.28),transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%,rgba(88,28,135,.2),transparent),
+    radial-gradient(ellipse 40% 30% at 0% 80%,rgba(168,85,247,.1),transparent);
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px;
+}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,textarea,select{font-family:inherit;color:var(--t0);font-size:16px}
 
-/* screens */
-.screen{display:none;min-height:100%;min-height:100dvh}
+.screen{display:none;min-height:100%;min-height:100dvh;position:relative;z-index:1}
 .screen.on{display:flex;flex-direction:column}
 
-/* FORM */
-#form-screen{align-items:center;padding:28px 16px 40px}
-.wrap{width:100%;max-width:440px}
-.logo{width:72px;height:72px;border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,var(--p),var(--pd));padding:6px;
-  box-shadow:0 0 36px var(--glow),0 8px 24px rgba(0,0,0,.4);animation:gp 3s ease-in-out infinite}
-@keyframes gp{0%,100%{box-shadow:0 0 28px var(--glow)}50%{box-shadow:0 0 48px rgba(168,85,247,.45)}}
-h1{text-align:center;font-size:22px;font-weight:900;margin-bottom:6px;
-  background:linear-gradient(135deg,#fff,var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{text-align:center;font-size:13px;color:var(--t2);margin-bottom:22px;line-height:1.6}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px;
-  box-shadow:0 16px 48px rgba(0,0,0,.45)}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:12.5px;color:var(--t1);margin-bottom:6px;font-weight:600}
+/* ===== FORM LUXURY ===== */
+#form-screen{align-items:center;justify-content:center;padding:28px 16px 48px}
+.shell{width:100%;max-width:460px}
+.brand-block{text-align:center;margin-bottom:28px}
+.logo-ring{
+  width:92px;height:92px;margin:0 auto 16px;border-radius:28px;padding:3px;
+  background:linear-gradient(135deg,rgba(216,180,254,.9),rgba(107,33,168,.6),rgba(168,85,247,.3));
+  box-shadow:0 0 50px var(--glow),0 12px 40px rgba(0,0,0,.5);
+  animation:pulse 4s ease-in-out infinite;
+}
+.logo-ring inner,.logo-ring img{
+  width:100%;height:100%;border-radius:25px;object-fit:contain;
+  background:linear-gradient(160deg,#1a1028,#0d0a14);display:block;padding:8px;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 40px var(--glow),0 12px 40px rgba(0,0,0,.5)}
+  50%{box-shadow:0 0 70px rgba(168,85,247,.55),0 12px 40px rgba(0,0,0,.5)}
+}
+.brand-block h1{
+  font-size:28px;font-weight:900;letter-spacing:-.02em;
+  background:linear-gradient(135deg,#fff 20%,var(--p2) 70%,var(--p));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.brand-block .tag{
+  display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;
+  font-size:11px;font-weight:700;color:var(--p2);
+  background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);
+  letter-spacing:.04em;
+}
+.brand-block .lead{margin-top:12px;font-size:13.5px;color:var(--t2);line-height:1.7}
+
+.card{
+  background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--line);border-radius:24px;padding:26px 22px;
+  box-shadow:0 24px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(216,180,254,.5),transparent);
+}
+.steps{display:flex;gap:6px;margin-bottom:20px}
+.steps span{
+  flex:1;height:3px;border-radius:99px;background:rgba(168,85,247,.15);
+  transition:.3s;
+}
+.steps span.on{background:linear-gradient(90deg,var(--pd),var(--p2))}
+
+.field{margin-bottom:16px}
+.field label{
+  display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t1);
+  margin-bottom:7px;font-weight:700;
+}
+.field label i{opacity:.7;font-style:normal}
 .field input,.field textarea,.field select{
-  width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;
-  padding:13px 14px;outline:none;transition:.2s}
-.field textarea{min-height:88px;resize:vertical;line-height:1.55}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--glow)}
-.btn{width:100%;padding:15px;border-radius:13px;font-weight:800;font-size:15px;margin-top:6px;
-  background:linear-gradient(135deg,var(--p2),var(--p));color:#1a052e;
-  box-shadow:0 4px 20px var(--glow);transition:.15s}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.55}
-.err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;min-height:18px}
+  width:100%;background:rgba(5,5,10,.7);border:1px solid rgba(168,85,247,.15);
+  border-radius:14px;padding:14px 16px;outline:none;transition:.2s;
+}
+.field textarea{min-height:96px;resize:vertical;line-height:1.6}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:rgba(168,85,247,.55);box-shadow:0 0 0 4px rgba(168,85,247,.12);
+  background:rgba(10,8,18,.9);
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(155,142,196,.45)}
+
+.btn-lux{
+  width:100%;padding:16px;border-radius:14px;font-weight:900;font-size:15px;
+  margin-top:8px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#e9d5ff 0%,var(--p) 45%,var(--pd) 100%);
+  color:#1a052e;box-shadow:0 6px 28px var(--glow),0 0 0 1px rgba(255,255,255,.08) inset;
+  transition:transform .15s,box-shadow .2s;
+}
+.btn-lux:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(168,85,247,.45)}
+.btn-lux:active{transform:scale(.98)}
+.btn-lux:disabled{opacity:.55;transform:none}
+.err{color:#fb7185;font-size:12.5px;text-align:center;margin-top:12px;min-height:18px;font-weight:600}
+
+.perks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.perk{
+  background:rgba(12,10,20,.6);border:1px solid rgba(168,85,247,.1);border-radius:14px;
+  padding:12px;font-size:11.5px;color:var(--t2);line-height:1.45;
+}
+.perk b{display:block;color:var(--p2);font-size:12.5px;margin-bottom:3px}
 
 /* WAIT */
-#wait-screen{position:relative;overflow:hidden}
-.wait-bg{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(circle at 50% 25%,rgba(168,85,247,.16),transparent 55%)}
-.wait-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:32px 20px;text-align:center;position:relative;z-index:2}
-.wait-icon{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:36px;margin-bottom:18px;background:linear-gradient(135deg,var(--pd),var(--p));
-  box-shadow:0 0 50px var(--glow);animation:fl 3.2s ease-in-out infinite}
-@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.wait-body h2{font-size:20px;font-weight:900;margin-bottom:8px}
-.wait-body .desc{font-size:14px;color:var(--t1);max-width:300px;line-height:1.7;margin-bottom:22px}
-.qrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
-.qbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 20px;min-width:108px}
+#wait-screen{align-items:center;justify-content:center;padding:24px}
+.wait-card{
+  width:100%;max-width:400px;text-align:center;
+  background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--line);
+  border-radius:24px;padding:36px 24px;box-shadow:0 24px 80px rgba(0,0,0,.5);
+}
+.wait-icon{
+  width:88px;height:88px;margin:0 auto 18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  background:linear-gradient(135deg,var(--pd),var(--p));
+  box-shadow:0 0 50px var(--glow);animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.wait-card h2{font-size:20px;font-weight:900;margin-bottom:8px}
+.wait-card .desc{font-size:13.5px;color:var(--t1);line-height:1.7;margin-bottom:22px}
+.qrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.qbox{
+  background:rgba(5,5,10,.6);border:1px solid var(--line);border-radius:16px;
+  padding:14px 22px;min-width:110px;
+}
 .qbox .v{font-size:26px;font-weight:900;color:var(--p2)}
-.qbox .l{font-size:11px;color:var(--t2);margin-top:3px}
-.tips{width:100%;max-width:340px;margin-top:18px;text-align:right}
-.tips h3{font-size:12px;color:var(--t2);margin-bottom:8px;font-weight:600}
-.tip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
-  font-size:12.5px;color:var(--t1);margin-bottom:6px;line-height:1.45}
+.qbox .l{font-size:11px;color:var(--t2);margin-top:2px}
+.tips{text-align:right;margin-top:8px}
+.tips h3{font-size:11px;color:var(--t2);margin-bottom:8px;font-weight:700}
+.tip{
+  background:rgba(5,5,10,.5);border:1px solid rgba(168,85,247,.1);border-radius:12px;
+  padding:10px 12px;font-size:12px;color:var(--t1);margin-bottom:6px;line-height:1.5;
+}
 .tip b{color:var(--p2)}
 
-/* CHAT full */
+/* CHAT */
 #chat-screen{height:100%;height:100dvh}
-.ch{padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  box-shadow:0 0 24px rgba(168,85,247,.08)}
+.ch{
+  padding:12px 14px;background:rgba(12,10,20,.95);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
 .ch .nm{font-weight:800;font-size:14.5px}
-.ch .st{font-size:11.5px;color:var(--t2)}
-.call{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;
-  align-items:center;justify-content:center;font-size:17px;background:var(--card2)}
+.ch .st{font-size:11px;color:var(--t2)}
+.call{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(18,16,28,.8)}
 .call.on{background:var(--p);border-color:var(--p);box-shadow:0 0 18px var(--glow)}
 #scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;
-  background:linear-gradient(180deg,var(--bg),var(--card));-webkit-overflow-scrolling:touch}
+  -webkit-overflow-scrolling:touch}
 .row{display:flex}
-.row.me{justify-content:flex-end}
-.row.them{justify-content:flex-start}
-.row.sys{justify-content:center}
-.bub{max-width:85%;padding:11px 14px;border-radius:15px;font-size:14px;line-height:1.65;word-break:break-word}
-.row.me .bub{background:linear-gradient(135deg,var(--pd),#4c1d95);border-radius:15px 15px 4px 15px;
-  box-shadow:0 2px 14px var(--glow)}
-.row.them .bub{background:var(--card2);border:1px solid var(--line);border-radius:15px 15px 15px 4px}
+.row.me{justify-content:flex-end}.row.them{justify-content:flex-start}.row.sys{justify-content:center}
+.bub{max-width:85%;padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.65;word-break:break-word}
+.row.me .bub{background:linear-gradient(135deg,#5b21b6,#7c3aed);border-radius:16px 16px 4px 16px;
+  box-shadow:0 2px 16px var(--glow)}
+.row.them .bub{background:rgba(24,22,36,.95);border:1px solid var(--line);border-radius:16px 16px 16px 4px}
 .row.sys .bub{background:transparent;color:var(--t2);font-size:12px;border:1px dashed var(--line);
   border-radius:8px;padding:7px 12px;max-width:92%;text-align:center}
 .bub .tm{font-size:10px;opacity:.45;margin-top:5px;text-align:end}
 .bub img,.bub video{max-width:100%;border-radius:10px;margin-top:6px;max-height:220px}
 .bub audio{margin-top:6px;width:200px}
 #typing{padding:3px 14px;font-size:11.5px;color:var(--t2);min-height:18px}
-.cf{display:flex;gap:8px;padding:10px 12px 14px;background:var(--card);border-top:1px solid var(--line);
-  align-items:flex-end;padding-bottom:max(14px,env(safe-area-inset-bottom))}
-.cf textarea{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:13px;
-  padding:12px 14px;outline:none;resize:none;min-height:44px;max-height:110px;line-height:1.45}
-.cf textarea:focus{border-color:var(--p)}
+.cf{display:flex;gap:8px;padding:10px 12px;padding-bottom:max(14px,env(safe-area-inset-bottom));
+  background:rgba(12,10,20,.95);border-top:1px solid var(--line);align-items:flex-end}
+.cf textarea{flex:1;background:rgba(5,5,10,.8);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;outline:none;resize:none;min-height:44px;max-height:110px}
+.cf textarea:focus{border-color:rgba(168,85,247,.5)}
 .ib{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);display:flex;
-  align-items:center;justify-content:center;font-size:16px;background:var(--card2);flex-shrink:0}
+  align-items:center;justify-content:center;font-size:16px;background:rgba(18,16,28,.9);flex-shrink:0}
 .ib.send{background:linear-gradient(135deg,var(--p2),var(--p));border:none;color:#1a052e}
 
 .link-btn{display:inline-flex;align-items:center;gap:7px;margin-top:7px;padding:9px 12px;
@@ -116,36 +201,43 @@ h1{text-align:center;font-size:22px;font-weight:900;margin-bottom:6px;
 .link-btn.tiktok{background:#111;border:1px solid #333}.link-btn.snapchat{background:#FFFC00;color:#000!important}
 .link-btn.facebook{background:#1877F2}.link-btn.generic{background:var(--pd);border:1px solid var(--p)}
 
-/* rating */
-.ro{position:fixed;inset:0;background:rgba(7,7,12,.92);z-index:100;display:flex;
-  align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(8px)}
-.rc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 22px;
-  max-width:360px;width:100%;text-align:center;box-shadow:0 0 50px var(--glow)}
-.rc h3{font-size:18px;margin-bottom:6px}
-.rc p{font-size:13px;color:var(--t2);margin-bottom:18px}
+.ro{position:fixed;inset:0;background:rgba(5,5,10,.92);z-index:100;display:flex;
+  align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(10px)}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px 22px;
+  max-width:360px;width:100%;text-align:center;box-shadow:0 0 60px var(--glow)}
+.rc h3{font-size:18px;margin-bottom:6px}.rc p{font-size:13px;color:var(--t2);margin-bottom:18px}
 .stars{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
 .stars button{font-size:32px;opacity:.3;filter:grayscale(1);transition:.15s}
 .stars button.on{opacity:1;filter:none;transform:scale(1.12)}
 #rr{display:none;margin-bottom:12px}
-#rr textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+#rr textarea{width:100%;background:rgba(5,5,10,.8);border:1px solid var(--line);border-radius:12px;
   padding:11px;min-height:72px;outline:none}
 </style>
 </head>
 <body>
 
 <div class="screen on" id="form-screen">
-  <div class="wrap">
-    <div class="logo" style="padding:0;overflow:hidden;background:transparent;box-shadow:0 0 36px var(--glow)">
-      <img src="/logo.png" alt="ناقه" style="width:100%;height:100%;object-fit:contain">
+  <div class="shell">
+    <div class="brand-block">
+      <div class="logo-ring"><img src="/logo.png" alt="ناقه"></div>
+      <h1>ناقه</h1>
+      <div class="tag">SUPPORT DESK</div>
+      <p class="lead">فريق دعم احترافي جاهز لمساعدتك.<br>أجب على الأسئلة بدقة وسنبدأ فوراً.</p>
     </div>
-    <h1>ناقه</h1>
-    <p class="sub">مركز دعم ناقه — أجب على الأسئلة وسنساعدك بأسرع وقت</p>
     <div class="card">
-      <div class="field"><label>اسمك</label><input id="f-name" placeholder="الاسم الكامل" autocomplete="name"></div>
-      <div class="field"><label>رقم التواصل</label><input id="f-contact" placeholder="جوال أو إيميل" inputmode="tel"></div>
-      <div class="field"><label>أين واجهتك المشكلة؟</label>
+      <div class="steps"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+      <div class="field">
+        <label><i>١</i> اسمك الكامل</label>
+        <input id="f-name" placeholder="كيف نناديك؟" autocomplete="name">
+      </div>
+      <div class="field">
+        <label><i>٢</i> رقم التواصل</label>
+        <input id="f-contact" placeholder="جوال أو بريد إلكتروني" inputmode="tel">
+      </div>
+      <div class="field">
+        <label><i>٣</i> أين واجهتك المشكلة؟</label>
         <select id="f-loc">
-          <option value="">اختر...</option>
+          <option value="">اختر القسم...</option>
           <option>الموقع / التطبيق</option>
           <option>الحساب وتسجيل الدخول</option>
           <option>الدفع والفواتير</option>
@@ -153,42 +245,52 @@ h1{text-align:center;font-size:22px;font-weight:900;margin-bottom:6px;
           <option>أخرى</option>
         </select>
       </div>
-      <div class="field"><label>ملخص المشكلة</label><input id="f-sub" placeholder="مثال: لا أستطيع الدخول"></div>
-      <div class="field"><label>التفاصيل</label><textarea id="f-det" placeholder="متى بدأت؟ ماذا جربت؟ أي رسالة خطأ؟"></textarea></div>
-      <button class="btn" id="f-go">إرسال الطلب</button>
+      <div class="field">
+        <label><i>٤</i> ملخص سريع</label>
+        <input id="f-sub" placeholder="مثال: لا أستطيع تسجيل الدخول">
+      </div>
+      <div class="field">
+        <label><i>٥</i> اشرح لنا بالتفصيل</label>
+        <textarea id="f-det" placeholder="متى بدأت المشكلة؟ ماذا جربت؟ هل ظهرت رسالة خطأ؟"></textarea>
+      </div>
+      <button class="btn-lux" id="f-go">بدء المحادثة مع الدعم</button>
       <div class="err" id="f-err"></div>
+      <div class="perks">
+        <div class="perk"><b>⚡ رد سريع</b>متوسط الانتظار دقائق</div>
+        <div class="perk"><b>🔒 خاص</b>محادثتك محمية</div>
+        <div class="perk"><b>📎 مرفقات</b>صور وفيديو بعد البدء</div>
+        <div class="perk"><b>📞 صوت</b>اتصال مباشر عند الحاجة</div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="screen" id="wait-screen">
-  <div class="wait-bg"></div>
-  <div class="wait-body">
+  <div class="wait-card">
     <div class="wait-icon" id="w-icon">⏳</div>
-    <h2 id="w-title">طلبك قيد الانتظار</h2>
-    <p class="desc" id="w-desc">سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.</p>
+    <h2 id="w-title">طلبك في الطابور</h2>
+    <p class="desc" id="w-desc">جاري تجهيز أحد مستشاري ناقه للتواصل معك. ابقَ في هذه الصفحة.</p>
     <div class="qrow" id="w-q">
       <div class="qbox"><div class="v" id="w-pos">—</div><div class="l">دورك</div></div>
       <div class="qbox"><div class="v" id="w-eta">—</div><div class="l">الوقت المتوقع</div></div>
     </div>
     <div class="tips">
-      <h3>نصائح سريعة</h3>
-      <div class="tip"><b>١.</b> جهّز صورة أو نص رسالة الخطأ إن وجدت</div>
-      <div class="tip"><b>٢.</b> تأكد من اتصالك بالإنترنت</div>
-      <div class="tip"><b>٣.</b> لا تغلق الصفحة حتى يتم الرد عليك</div>
-      <div class="tip"><b>٤.</b> بعد بدء المحادثة يمكنك إرفاق ملفات</div>
+      <h3>نصائح أثناء الانتظار</h3>
+      <div class="tip"><b>١ ·</b> جهّز صورة أو نص رسالة الخطأ إن وُجدت</div>
+      <div class="tip"><b>٢ ·</b> تأكد من استقرار الاتصال بالإنترنت</div>
+      <div class="tip"><b>٣ ·</b> لا تغلق الصفحة حتى يتم الرد عليك</div>
+      <div class="tip"><b>٤ ·</b> بعد بدء المحادثة يمكنك إرفاق ملفات</div>
     </div>
   </div>
 </div>
 
 <div class="screen" id="chat-screen">
   <div class="ch">
-    <div><div class="nm" id="c-name">موظف الدعم</div><div class="st" id="c-st">متصل</div></div>
+    <div><div class="nm" id="c-name">مستشار ناقه</div><div class="st" id="c-st">متصل</div></div>
     <button class="call" id="c-call">📞</button>
   </div>
   <div id="scroll"></div>
   <div id="typing"></div>
-  <div id="closed"></div>
   <form class="cf" id="c-form">
     <button type="button" class="ib" id="c-att">📎</button>
     <textarea id="c-in" placeholder="اكتب رسالتك..." rows="1"></textarea>
@@ -203,11 +305,10 @@ h1{text-align:center;font-size:22px;font-weight:900;margin-bottom:6px;
 let tid=null,tok=null,sock=null,pc=null,peer=null,local=null,rated=false;
 const S=localStorage.getItem('support_ticket');
 if(S){try{const d=JSON.parse(S);tid=d.id;tok=d.token}catch{}}
-
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function tm(iso){if(!iso)return'';try{return new Date(iso+(iso.includes('Z')?'':'Z')).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}catch{return''}}
-function eta(s){if(!s||s<60)return'أقل من دقيقة';const m=Math.round(s/60);return m<60?m+' دقيقة':Math.round(m/60)+' ساعة'}
+function eta(s){if(!s||s<60)return'أقل من دقيقة';const m=Math.round(s/60);return m<60?m+' د':'≈'+Math.round(m/60)+' س'}
 function show(id){['form-screen','wait-screen','chat-screen'].forEach(x=>$(x).classList.toggle('on',x===id))}
 
 $('f-go').onclick=async()=>{
@@ -224,41 +325,40 @@ $('f-go').onclick=async()=>{
     tid=d.id;tok=d.accessToken;localStorage.setItem('support_ticket',JSON.stringify({id:tid,token:tok}));
     goWait(d);connect();
   }catch(e){$('f-err').textContent=e.message||'تعذر الإرسال'}
-  finally{$('f-go').disabled=false;$('f-go').textContent='إرسال الطلب'}
+  finally{$('f-go').disabled=false;$('f-go').textContent='بدء المحادثة مع الدعم'}
 };
 
 function goWait(d){
   show('wait-screen');
   if(d.status==='active')return goChat(d);
   if(d.status==='closed')return goClosed(d);
-  $('w-icon').textContent='⏳';$('w-title').textContent='طلبك قيد الانتظار';
-  $('w-desc').textContent='سيتم التواصل معك قريباً. ابقَ في هذه الصفحة.';
+  $('w-icon').textContent='⏳';$('w-title').textContent='طلبك في الطابور';
+  $('w-desc').textContent='جاري تجهيز أحد مستشاري ناقه للتواصل معك. ابقَ في هذه الصفحة.';
   $('w-q').style.display='flex';
   $('w-pos').textContent=d.position||'—';$('w-eta').textContent=eta(d.etaSeconds);
-  const m=$('music');m.volume=.22;m.play().catch(()=>{});
+  const m=$('music');m.volume=.2;m.play().catch(()=>{});
 }
 function goChat(d){
   $('music').pause();show('chat-screen');
-  $('c-name').textContent=d.assignedAdminName||'موظف الدعم';
+  $('c-name').textContent=d.assignedAdminName||'مستشار ناقه';
   $('c-st').textContent='متصل الآن';
-  if(d.status==='closed'){ $('c-form').style.display='none'; if(!d.rating&&!rated)rateModal(); }
+  if(d.status==='closed'){$('c-form').style.display='none';if(!d.rating&&!rated)rateModal()}
 }
 function goClosed(d){
   $('music').pause();show('wait-screen');
   $('w-icon').textContent=d.outcome==='approved'?'✅':'📋';
   $('w-title').textContent=d.outcome==='approved'?'تم حل طلبك':'تم إغلاق الطلب';
-  $('w-desc').textContent=d.solution||'شكراً لتواصلك معنا.';
+  $('w-desc').textContent=d.solution||'شكراً لثقتك في ناقه.';
   $('w-q').style.display='none';
   if(!d.rating&&!rated)rateModal();
 }
-
 function rateModal(){
   if($('ro'))return;
   const el=document.createElement('div');el.id='ro';el.className='ro';
-  el.innerHTML=`<div class="rc"><h3>كيف كانت تجربتك؟</h3><p>قيّم الخدمة من 1 إلى 5</p>
+  el.innerHTML=`<div class="rc"><h3>كيف كانت تجربتك مع ناقه؟</h3><p>قيّم الخدمة من 1 إلى 5</p>
     <div class="stars" id="st">${[1,2,3,4,5].map(v=>`<button data-v="${v}">⭐</button>`).join('')}</div>
     <div id="rr"><textarea id="rt" placeholder="ما الذي لم يعجبك؟"></textarea></div>
-    <button class="btn" id="rs" style="display:none">إرسال التقييم</button></div>`;
+    <button class="btn-lux" id="rs" style="display:none">إرسال التقييم</button></div>`;
   document.body.appendChild(el);
   let sel=0;
   el.querySelectorAll('#st button').forEach(b=>b.onclick=()=>{
@@ -277,14 +377,13 @@ function rateModal(){
     }catch(e){alert(e.message)}
   };
 }
-
 function connect(){
   if(sock)return;
   sock=io();
   sock.on('connect',()=>{if(tid&&tok)sock.emit('ticket:join',{ticketId:tid,accessToken:tok})});
   sock.on('ticket:history',ms=>{const s=$('scroll');s.innerHTML='';ms.forEach(bub);s.scrollTop=s.scrollHeight});
   sock.on('ticket:message',m=>{bub(m);const s=$('scroll');s.scrollTop=s.scrollHeight});
-  sock.on('ticket:typing',({text})=>{$('typing').textContent=text?'🖊️ الموظف يكتب...':''});
+  sock.on('ticket:typing',({text})=>{$('typing').textContent=text?'🖊️ المستشار يكتب...':''});
   sock.on('ticket:status',d=>{
     if(!d?.status)return;
     if(d.status==='active'){goChat(d);sock.emit('ticket:join',{ticketId:tid,accessToken:tok})}
@@ -303,7 +402,6 @@ function connect(){
   sock.on('rtc:ice',async({candidate})=>{try{await pc?.addIceCandidate(candidate)}catch{}});
   sock.on('rtc:call-end',endCall);
 }
-
 function links(t){
   if(!t)return'';
   return t.split(/(https?:\/\/[^\s<]+)/g).map(p=>{
@@ -335,7 +433,6 @@ function bub(m){
   r.innerHTML=`<div class="bub">${m.content?links(m.content):''}${media}<div class="tm">${tm(m.created_at)}</div></div>`;
   s.appendChild(r);
 }
-
 $('c-form').onsubmit=e=>{
   e.preventDefault();const v=$('c-in').value.trim();if(!v||!tid)return;
   sock.emit('ticket:message',{ticketId:tid,content:v});$('c-in').value='';$('c-in').style.height='auto';
@@ -366,7 +463,6 @@ async function ensure(){
 }
 function endCall(){if(pc){pc.close();pc=null}if(local){local.getTracks().forEach(t=>t.stop());local=null}
   $('c-call').classList.remove('on');if(tid)sock?.emit('rtc:call-end',{ticketId:tid});peer=null}
-
 if(tid&&tok){
   fetch(`/api/tickets/${tid}/status?token=${tok}`).then(r=>r.json()).then(d=>{
     if(d.error){localStorage.removeItem('support_ticket');return}

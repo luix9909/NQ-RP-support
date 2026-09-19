@@ -192,16 +192,29 @@ app.post('/api/admin/login', (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'أدخل الإيميل وكلمة المرور' });
-    const admin = stmts.getAdminByEmail.get(email.trim());
-    if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
+    const emailClean = String(email).trim();
+    let admin = stmts.getAdminByEmail.get(emailClean);
+    if (!admin) {
+      // fallback: scan (case issues)
+      const all = stmts.listAdmins.all();
+      const hit = all.find(a => a.email && a.email.toLowerCase() === emailClean.toLowerCase());
+      if (hit) admin = stmts.getAdminById.get(hit.id);
+    }
+    if (!admin) {
+      console.log('login fail: email not found', emailClean);
+      return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
+    }
+    const full = stmts.getAdminById.get(admin.id) || admin;
+    if (!full.password_hash || !bcrypt.compareSync(password, full.password_hash)) {
+      console.log('login fail: bad password for', emailClean);
       return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
     }
     const token = nanoid(32);
-    adminSessions.set(token, admin.id);
-    res.json({ token, admin: publicAdmin(admin) });
+    adminSessions.set(token, full.id);
+    res.json({ token, admin: publicAdmin(full) });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'خطأ في السيرفر' });
+    console.error('login error', e);
+    res.status(500).json({ error: 'خطأ في السيرفر: ' + (e.message || 'unknown') });
   }
 });
 app.get('/api/admin/me', requireAdminAuth, (req, res) => res.json({ admin: publicAdmin(req.admin) }));
